@@ -1,0 +1,62 @@
+{% extends 'base.jinja.html' %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/styles_product.css" />
+{% endblock %}
+
+{% block content %}
+<div class="product-page-container" id="product-root">
+<div id="product-loading" class="text-center" style="padding: 100px 0;">
+<p class="headline">🐈️ Loading Product...</p>
+</div>
+
+<div id="product-content" class="product-layout" style="display: none;">
+    <div class="product-gallery">
+        <div class="main-image-container">
+            <img id="main-product-image" src="" alt="">
+        </div>
+        <div class="thumbnail-strip" id="thumbnail-strip">
+            <!-- Thumbs injected by JS -->
+        </div>
+    </div>
+
+    <div class="product-details">
+        <nav class="breadcrumb">
+            <a href="/shop.html">Shop</a> / <span id="breadcrumb-name">Product</span>
+        </nav>
+        
+        <h1 id="product-name" class="headline"></h1>
+        <p id="product-price" class="price-large"></p>
+        
+        <div id="product-description" class="description"></div>
+
+        <div id="variant-section" class="options-section" style="display: none;">
+            <label>Select Option</label>
+            <div id="variant-picker" class="variant-grid">
+                <!-- Variant buttons injected by JS -->
+            </div>
+        </div>
+
+        <div class="purchase-actions">
+            <button id="add-to-cart-btn" class="btn-primary">
+                Add to Basket
+            </button>
+            <p id="stock-status" class="stock-status-text"></p>
+        </div>
+    </div>
+</div>
+
+
+</div>
+
+<script src="/js/product_detail.js" defer></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+if (typeof initProductPage === 'function') {
+initProductPage();
+}
+});
+</script>
+
+{% endblock %}

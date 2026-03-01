@@ -30,23 +30,27 @@ function createProductCard(product) {
   const imgUrl = transformImageUrl(product.thumbnail_url);
   const price = (product.price_pence / 100).toFixed(2);
   const isOutOfStock = !product.in_stock;
+  const productUrl = `/products.html?product-id=${product.slug}`
 
   return `
         <article class="shop-item" data-slug="${product.slug}">
-            <div class="shop-img-container ${isOutOfStock ? "out-of-stock" : ""}">
-                <img src="${imgUrl}" alt="${product.name}" loading="lazy">
-                ${isOutOfStock ? '<span class="stock-badge">Sold Out</span>' : ""}
-                <button class="quick-add" ${isOutOfStock ? "disabled" : ""} 
-                        onclick="handleQuickAdd('${product.slug}')">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <path d="M12 5v14M5 12h14"/>
-                    </svg>
-                </button>
-            </div>
-            <div class="shop-item-info">
-                <h3>${product.name}</h3>
-                <p class="price">£${price}</p>
-            </div>
+            <a href="${productUrl}" class="shop-item-link" style="text-decoration: none; color: inherit; display: block;">
+                <div class="shop-img-container ${isOutOfStock ? "out-of-stock" : ""}">
+                    <img src="${imgUrl}" alt="${product.name}" loading="lazy">
+                    ${isOutOfStock ? '<span class="stock-badge">Sold Out</span>' : ""}
+                    <button class="quick-add" 
+                            ${isOutOfStock ? "disabled" : ""} 
+                            onclick="event.preventDefault(); handleQuickAdd('${product.slug}')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="shop-item-info">
+                    <h3>${product.name}</h3>
+                    <p class="price">£${price}</p>
+                </div>
+            </a>
         </article>
     `;
 }
@@ -62,22 +66,24 @@ async function handleQuickAdd(slug) {
  * Core function to fetch and append products to the grid
  */
 async function fetchProducts(grid, cursor = "") {
-    const url = cursor ? `${API_URL}/products?cursor=${cursor}` : `${API_URL}/products`;
-    
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
-        
-        const html = data.products.map(p => createProductCard(p)).join('');
-        grid.insertAdjacentHTML('beforeend', html);
-        
-        // Update the cursor on the grid for the observer to read
-        grid.dataset.nextCursor = data.next_cursor || "";
-        return data.next_cursor;
-    } catch (err) {
-        console.error("Failed to load products", err);
-        return null;
-    }
+  const url = cursor
+    ? `${API_URL}/products?cursor=${cursor}`
+    : `${API_URL}/products`;
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    const html = data.products.map((p) => createProductCard(p)).join("");
+    grid.insertAdjacentHTML("beforeend", html);
+
+    // Update the cursor on the grid for the observer to read
+    grid.dataset.nextCursor = data.next_cursor || "";
+    return data.next_cursor;
+  } catch (err) {
+    console.error("Failed to load products", err);
+    return null;
+  }
 }
 
 /**
@@ -91,17 +97,20 @@ async function initShop() {
   let currentCursor = await fetchProducts(grid);
   let nextCursor = grid.dataset.nextCursor;
 
-  const observer = new IntersectionObserver(async (entries) => {
-    // Only trigger if we are intersecting AND we actually have a next page
-    if (entries[0].isIntersecting && grid.dataset.nextCursor) {
-      currentCursor = await fetchProducts(grid, grid.dataset.nextCursor);
-      
-      // If no more items, stop watching
-      if (!currentCursor) {
+  const observer = new IntersectionObserver(
+    async (entries) => {
+      // Only trigger if we are intersecting AND we actually have a next page
+      if (entries[0].isIntersecting && grid.dataset.nextCursor) {
+        currentCursor = await fetchProducts(grid, grid.dataset.nextCursor);
+
+        // If no more items, stop watching
+        if (!currentCursor) {
           observer.unobserve(sentinel);
+        }
       }
-    }
-  }, { rootMargin: '200px' }); 
+    },
+    { rootMargin: "200px" },
+  );
 
   observer.observe(sentinel);
 }

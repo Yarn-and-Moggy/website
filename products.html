@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Yarn & Moggy | Catnip Infused Crochet Toys</title>
+        <link rel="stylesheet" href="styles.css" />
+        
+<link rel="stylesheet" href="/styles_product.css" />
+
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&display=swap"
+              rel="stylesheet" />
+        <meta property="og:title" content="Yarn & Moggy" />
+        <meta property="og:description" content="Handcraft Amigurumi Crochet. Coming Soon" />
+        <meta property="og:image" content="assets/og_logo.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="Yarn & Moggy logo" />
+        <meta property="og:url" content="https://yarnandmoggy.co.uk" />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Yarn & Moggy" />
+        <meta name="twitter:description" content="Handcraft Amigurumi Crochet. Coming Soon" />
+        <meta name="twitter:image" content="assets/og_logo.png" />
+        <meta name="twitter:image:alt" content="Yarn & Moggy logo" />
+        <link rel="icon" type="image/x-icon" href="favicon.ico" />
+        <link rel="apple-touch-icon"
+              sizes="180x180"
+              href="assets/icon.png" />
+    </head>
+    <body>
+        <header>
+            <nav id="header-nav">
+                <div class="nav-left">
+                    <p class="clowder-text">Join the Clowder!</p>
+                </div>
+                <div class="nav-center">
+                    
+                        <a href="https://www.instagram.com/yarnandmoggy" class="social_link" target="_blank">Instagram</a>
+                    
+                        <a href="https://www.facebook.com/profile.php?id=61588603917369" class="social_link" target="_blank">Facebook</a>
+                    
+                </div>
+                <div class="nav-right">
+                    <!-- Reserved for future use (Probably Cart) -->
+                </div>
+            </nav>
+            <div class="logo-container">
+              <a href="/"><img src="assets/logo.svg"
+                     alt="Yarn & Moggy Logo"
+                     id="logo" /></a>
+                <div class="dots-container">
+                    <span class="dot pink"></span>
+                    <span class="dot blue"></span>
+                    <span class="dot yellow"></span>
+                </div>
+                <h1 class="visually-hidden">Yarn & Moggy</h1>
+            </div>
+            <hr />
+            
+        </header>
+            
+<div class="product-page-container" id="product-root">
+<div id="product-loading" class="text-center" style="padding: 100px 0;">
+<p class="headline">🐈️ Loading Product...</p>
+</div>
+
+<div id="product-content" class="product-layout" style="display: none;">
+    <div class="product-gallery">
+        <div class="main-image-container">
+            <img id="main-product-image" src="" alt="">
+        </div>
+        <div class="thumbnail-strip" id="thumbnail-strip">
+            <!-- Thumbs injected by JS -->
+        </div>
+    </div>
+
+    <div class="product-details">
+        <nav class="breadcrumb">
+            <a href="/shop.html">Shop</a> / <span id="breadcrumb-name">Product</span>
+        </nav>
+        
+        <h1 id="product-name" class="headline"></h1>
+        <p id="product-price" class="price-large"></p>
+        
+        <div id="product-description" class="description"></div>
+
+        <div id="variant-section" class="options-section" style="display: none;">
+            <label>Select Option</label>
+            <div id="variant-picker" class="variant-grid">
+                <!-- Variant buttons injected by JS -->
+            </div>
+        </div>
+
+        <div class="purchase-actions">
+            <button id="add-to-cart-btn" class="btn-primary">
+                Add to Basket
+            </button>
+            <p id="stock-status" class="stock-status-text"></p>
+        </div>
+    </div>
+</div>
+
+
+</div>
+
+<script src="/js/product_detail.js" defer></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+if (typeof initProductPage === 'function') {
+initProductPage();
+}
+});
+</script>
+
+
+            <footer>
+                <p>Handmade with Catnip & Love • Nottingham, UK</p>
+            </footer>
+        </body>
+    </html>
