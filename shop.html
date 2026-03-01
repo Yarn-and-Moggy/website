@@ -6,6 +6,8 @@
         <title>Yarn & Moggy | Catnip Infused Crochet Toys</title>
         <link rel="stylesheet" href="styles.css" />
         
+<link rel="stylesheet" href="styles_shop.css" />
+
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -60,52 +62,30 @@
             </div>
             <hr />
             
-    <div class="hero-text">
-        <span class="eyebrow">Premium Catnip Infused</span>
-        <h2 class="headline">Toys that make them purr.</h2>
-        <p class="blurb">Handcraft Amigurumi Crochet. Coming Soon.</p>
-    </div>
-    <div class="cta-container">
-        <a href="/shop.html" class="btn-shop">
-            <span>Shop the Collection</span>
-            <svg viewBox="0 0 24 24"
-                 fill="none"
-                 stroke="currentColor"
-                 stroke-width="3">
-                <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
-        </a>
-    </div>
-    <hr />
-    
         </header>
             
-<main>
-    <section class="gallery">
-        
-            <article class="gallery-item">
-                <div class="img-container">
-                    <img src="assets/img1.jpeg" alt="Frankie playing with Yarn & Moggy toy" />
-                </div>
-                <p class="caption">The Playtest</p>
-            </article>
-        
-            <article class="gallery-item">
-                <div class="img-container">
-                    <img src="assets/img2.jpeg" alt="Crochet detail of cat toy" />
-                </div>
-                <p class="caption">Catnip Infused</p>
-            </article>
-        
-            <article class="gallery-item">
-                <div class="img-container">
-                    <img src="assets/img3.jpeg" alt="Sam playing with Yarn & Moggy toy" />
-                </div>
-                <p class="caption">Slow-made by hand</p>
-            </article>
-        
-    </section>
+<main class="shop-container">
+    <header class="shop-header">
+        <h1 class="headline">The Collection</h1>
+        <p class="blurb">Limited runs of handmade catnip joy.</p>
+    </header>
+
+    <div id="product-grid" class="product-grid" data-next-cursor="">
+    </div>
+
+    <!-- The Sentinel for Lazy Loading -->
+    <div id="load-more-sentinel" style="height: 20px;"></div>
 </main>
+
+<script src="/js/render.js" defer></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof initShop === 'function') {
+            initShop();
+        }
+    });
+</script>
 
             <footer>
                 <p>Handmade with Catnip & Love • Nottingham, UK</p>

@@ -39,4 +39,5 @@ data:
       caption: Slow-made by hand
 
   footer: Handmade with Catnip & Love • Nottingham, UK
-  data.api_url: https://tq2jf6n0wo.execute-api.localhost.localstack.cloud:4566/prod/
+  api_url: https://tq2jf6n0wo.execute-api.localhost.localstack.cloud:4566/prod/
+  bucket_url: http://localhost:4566 # LOCALTEST ONLY

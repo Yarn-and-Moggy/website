@@ -1,0 +1,28 @@
+{% extends 'base.jinja.html' %}
+{% block extra_css %}
+<link rel="stylesheet" href="styles_shop.css" />
+{% endblock %}
+{% block content %}
+<main class="shop-container">
+    <header class="shop-header">
+        <h1 class="headline">The Collection</h1>
+        <p class="blurb">Limited runs of handmade catnip joy.</p>
+    </header>
+
+    <div id="product-grid" class="product-grid" data-next-cursor="">
+    </div>
+
+    <!-- The Sentinel for Lazy Loading -->
+    <div id="load-more-sentinel" style="height: 20px;"></div>
+</main>
+
+<script src="/js/render.js" defer></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof initShop === 'function') {
+            initShop();
+        }
+    });
+</script>
+{% endblock %}

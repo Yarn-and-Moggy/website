@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{{ data.page_title }}</title>
+        <link rel="stylesheet" href="styles.css" />
+        {% block extra_css %}{% endblock %}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&display=swap"
+              rel="stylesheet" />
+        <meta property="og:title" content="{{ data.og_title }}" />
+        <meta property="og:description" content="{{ data.og_description }}" />
+        <meta property="og:image" content="{{ data.og_image }}" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="{{ data.og_image_alt }}" />
+        <meta property="og:url" content="{{ data.og_url }}" />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="{{ data.og_title }}" />
+        <meta name="twitter:description" content="{{ data.og_description }}" />
+        <meta name="twitter:image" content="{{ data.og_image }}" />
+        <meta name="twitter:image:alt" content="{{ data.og_image_alt }}" />
+        <link rel="icon" type="image/x-icon" href="{{ data.icon }}" />
+        <link rel="apple-touch-icon"
+              sizes="180x180"
+              href="{{ data.apple_touch_icon }}" />
+    </head>
+    <body>
+        <header>
+            <nav id="header-nav">
+                <div class="nav-left">
+                    <p class="clowder-text">Join the Clowder!</p>
+                </div>
+                <div class="nav-center">
+                    {% for item in data.header_nav %}
+                        <a href="{{ item.href }}" class="{{ item.class }}" target="_blank">{{ item.text }}</a>
+                    {% endfor %}
+                </div>
+                <div class="nav-right">
+                    <!-- Reserved for future use (Probably Cart) -->
+                </div>
+            </nav>
+            <div class="logo-container">
+              <a href="/"><img src="{{ data.logo.src }}"
+                     alt="{{ data.logo.alt }}"
+                     id="{{ data.logo.id }}" /></a>
+                <div class="dots-container">
+                    <span class="dot pink"></span>
+                    <span class="dot blue"></span>
+                    <span class="dot yellow"></span>
+                </div>
+                <h1 class="visually-hidden">{{ data.logo.header_hidden }}</h1>
+            </div>
+            <hr />
+            {% block header_extra %}{% endblock %}
+        </header>
+            {% block content %}{% endblock %}
+            <footer>
+                <p>{{ data.footer }}</p>
+            </footer>
+        </body>
+    </html>
