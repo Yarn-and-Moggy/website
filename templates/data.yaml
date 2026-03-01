@@ -1,0 +1,42 @@
+data:
+  page_title: Yarn & Moggy | Catnip Infused Crochet Toys
+  og_title: Yarn & Moggy
+  og_description: Handcraft Amigurumi Crochet. Coming Soon
+  og_image: assets/og_logo.png
+  og_image_alt: Yarn & Moggy logo
+  og_url: https://yarnandmoggy.co.uk
+  icon: favicon.ico
+  apple_touch_icon: assets/icon.png
+
+  header_nav:
+    - class: social_link
+      href: https://www.instagram.com/yarnandmoggy
+      text: Instagram
+    - class: social_link
+      href: https://www.facebook.com/profile.php?id=61588603917369
+      text: Facebook
+
+  logo:
+    src: assets/logo.svg
+    alt: Yarn & Moggy Logo
+    id: logo
+    header_hidden: Yarn & Moggy
+
+  hero_text:
+    eyebrow: Premium Catnip Infused
+    headline: Toys that make them purr.
+    blurb: Handcraft Amigurumi Crochet. Coming Soon.
+
+  gallery:
+    - src: assets/img1.jpeg
+      alt: Frankie playing with Yarn & Moggy toy
+      caption: The Playtest
+    - src: assets/img2.jpeg
+      alt: Crochet detail of cat toy
+      caption: Catnip Infused
+    - src: assets/img3.jpeg
+      alt: Sam playing with Yarn & Moggy toy
+      caption: Slow-made by hand
+
+  footer: Handmade with Catnip & Love • Nottingham, UK
+  data.api_url: https://tq2jf6n0wo.execute-api.localhost.localstack.cloud:4566/prod/
