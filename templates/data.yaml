@@ -38,6 +38,11 @@ data:
       alt: Sam playing with Yarn & Moggy toy
       caption: Slow-made by hand
 
+  shop:
+    headline: The Collection
+    blurb: Limited runs of handmade catnip joy.
+    aside: All items are handmade and pieces have natural variation.
+
   footer: Handmade with Catnip & Love • Nottingham, UK
   api_url: https://tq2jf6n0wo.execute-api.localhost.localstack.cloud:4566/prod/
   bucket_url: http://localhost:4566 # LOCALTEST ONLY

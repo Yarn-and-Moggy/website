@@ -58,8 +58,12 @@ function createProductCard(product) {
 /**
  * Quick add button (does nothing at the moment)
  */
-async function handleQuickAdd(slug) {
-  console.log(`Adding ${slug} to basket...`);
+function handleQuickAdd(slug) {
+    if (typeof addToBasket === 'function') {
+        addToBasket(slug, 1);
+    } else {
+        console.error("Basket logic not loaded yet.");
+    }
 }
 
 /**
@@ -92,10 +96,13 @@ async function fetchProducts(grid, cursor = "") {
 async function initShop() {
   const grid = document.getElementById("product-grid");
   const sentinel = document.getElementById("load-more-sentinel");
+  const loading = document.getElementById("shop-loading");
   if (!grid || !sentinel) return;
 
   let currentCursor = await fetchProducts(grid);
   let nextCursor = grid.dataset.nextCursor;
+
+  loading.style.display = "none";
 
   const observer = new IntersectionObserver(
     async (entries) => {

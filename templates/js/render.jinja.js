@@ -92,10 +92,13 @@ async function fetchProducts(grid, cursor = "") {
 async function initShop() {
   const grid = document.getElementById("product-grid");
   const sentinel = document.getElementById("load-more-sentinel");
+  const loading = document.getElementById("shop-loading");
   if (!grid || !sentinel) return;
 
   let currentCursor = await fetchProducts(grid);
   let nextCursor = grid.dataset.nextCursor;
+
+  loading.style.display = "none";
 
   const observer = new IntersectionObserver(
     async (entries) => {

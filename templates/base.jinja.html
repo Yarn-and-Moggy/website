@@ -42,7 +42,12 @@
                     {% endfor %}
                 </div>
                 <div class="nav-right">
-                    <!-- Reserved for future use (Probably Cart) -->
+                    <a href="/basket.html" class="basket-link" id="basket-toggle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4H6zM3 6h18M16 10a4 4 0 01-8 0"/>
+                        </svg>
+                        <span id="basket-badge" class="basket-badge" style="display: none;">0</span>
+                    </a>
                 </div>
             </nav>
             <div class="logo-container">
@@ -59,9 +64,16 @@
             <hr />
             {% block header_extra %}{% endblock %}
         </header>
-            {% block content %}{% endblock %}
-            <footer>
-                <p>{{ data.footer }}</p>
-            </footer>
+
+        {% block content %}{% endblock %}
+
+        <footer>
+            <p>{{ data.footer }}</p>
+        </footer>
+
+        <script src="/js/basket.js"></script>
+
+        {% block extra_js %}{% endblock %}
+
         </body>
     </html>

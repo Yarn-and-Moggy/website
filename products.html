@@ -46,7 +46,12 @@
                     
                 </div>
                 <div class="nav-right">
-                    <!-- Reserved for future use (Probably Cart) -->
+                    <a href="/basket.html" class="basket-link" id="basket-toggle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4H6zM3 6h18M16 10a4 4 0 01-8 0"/>
+                        </svg>
+                        <span id="basket-badge" class="basket-badge" style="display: none;">0</span>
+                    </a>
                 </div>
             </nav>
             <div class="logo-container">
@@ -63,7 +68,8 @@
             <hr />
             
         </header>
-            
+
+        
 <div class="product-page-container" id="product-root">
 <div id="product-loading" class="text-center" style="padding: 100px 0;">
 <p class="headline">🐈️ Loading Product...</p>
@@ -108,6 +114,15 @@
 
 </div>
 
+
+
+        <footer>
+            <p>Handmade with Catnip & Love • Nottingham, UK</p>
+        </footer>
+
+        <script src="/js/basket.js"></script>
+
+        
 <script src="/js/product_detail.js" defer></script>
 
 <script>
@@ -119,8 +134,5 @@ initProductPage();
 </script>
 
 
-            <footer>
-                <p>Handmade with Catnip & Love • Nottingham, UK</p>
-            </footer>
         </body>
     </html>

@@ -57,7 +57,55 @@ body {
 }
 
 .nav-right {
-  text-align: right;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.basket-link {
+    position: relative;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    transition: color 0.3s ease;
+}
+
+.basket-link svg {
+    width: 28px;
+    height: 28px;
+}
+
+.basket-link:hover {
+    color: var(--accent-pink);
+}
+
+.basket-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: var(--accent-pink);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 800;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white;
+    transform: translate(25%, -25%);
+}
+
+@keyframes badgePop {
+    0% { transform: translate(25%, -25%) scale(1); }
+    50% { transform: translate(25%, -25%) scale(1.4); }
+    100% { transform: translate(25%, -25%) scale(1); }
+}
+
+.badge-pop {
+    animation: badgePop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .clowder-text {

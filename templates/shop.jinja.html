@@ -4,10 +4,14 @@
 {% endblock %}
 {% block content %}
 <main class="shop-container">
-    <header class="shop-header">
-        <h1 class="headline">The Collection</h1>
-        <p class="blurb">Limited runs of handmade catnip joy.</p>
-    </header>
+    <div id="shop-loading" class="text-center" style="padding: 100px 0;">
+      <p class="headline">🐈️ Loading Product...</p>
+    </div>
+    <div class="shop-header">
+      <h1 class="headline">{{ data.shop.headline }}</h1>
+      <p class="blurb">{{ data.shop.blur }}</p>
+      <p class="aside">{{ data.shop.aside }}</p>
+    </div>
 
     <div id="product-grid" class="product-grid" data-next-cursor="">
     </div>
@@ -16,13 +20,15 @@
     <div id="load-more-sentinel" style="height: 20px;"></div>
 </main>
 
-<script src="/js/render.js" defer></script>
+{% endblock %}
+{% block extra_js %}
+  <script src="/js/render.js" defer></script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        if (typeof initShop === 'function') {
-            initShop();
-        }
-    });
-</script>
+  <script>
+      document.addEventListener('DOMContentLoaded', () => {
+          if (typeof initShop === 'function') {
+              initShop();
+          }
+      });
+  </script>
 {% endblock %}
