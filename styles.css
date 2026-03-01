@@ -31,6 +31,10 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+.text-center {
+  text-align: center;
+}
+
 #header-nav {
   background-color: var(--bg-nav);
   border-bottom: 1px solid var(--border-light);
