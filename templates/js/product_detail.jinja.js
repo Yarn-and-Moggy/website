@@ -1,6 +1,8 @@
 const API_URL = "{{ data.api_url }}";
 const BUCKET_OVERRIDE = "{{ data.bucket_url or '' }}";
 
+let selectedVariantName = null;
+
 /**
  * URL Transformer (Same as in shop for localhost)
  */
@@ -16,9 +18,9 @@ function transformImageUrl(originalUrl) {
 }
 
 /**
- * Checks if a string is a valid CSS color
+ * Checks if a string is a valid CSS colour
  */
-function isColor(str) {
+function iscolour(str) {
   const s = new Option().style;
   s.color = str;
   return s.color !== "";
@@ -47,6 +49,35 @@ async function initProductPage() {
   }
 }
 
+async function handleAdd(product) {
+  if (typeof addToBasket !== "function") {
+    console.error("Basket logic not loaded yet.");
+    return;
+  }
+
+  // ASSERTION: If variants exist, one must be chosen
+  if (product.variants && product.variants.length > 0 && !selectedVariantName) {
+    // Shudder animation
+    const addBtn = document.getElementById("add-to-cart-btn");
+    addBtn.classList.add("shudder");
+    addBtn.classList.add("needs-selection");
+    setTimeout(() => addBtn.classList.remove("shudder"), 500);
+
+    // Pulse the first variant
+    const firstVariant = document.getElementsByClassName("variant-opt")[0];
+    firstVariant.classList.add("picker-highlight");
+    setTimeout(() => firstVariant.classList.remove("picker-highlight"), 1000);
+
+    // Show a little message nearby
+    // TODO: Maybe
+    // showBasketMessage("Please pick a colour first! 🐾");
+    return;
+  }
+
+  // If we pass validation, add to the global basket
+  addToBasket(product, 1, selectedVariantName);
+}
+
 function renderProduct(product) {
   // Basic Info
   document.getElementById("breadcrumb-name").textContent = product.name;
@@ -55,6 +86,9 @@ function renderProduct(product) {
     `£${(product.price_pence / 100).toFixed(2)}`;
   document.getElementById("product-description").innerHTML =
     product.description;
+
+  // Add to basket button
+  const addButton = document.getElementById("add-to-cart-btn");
 
   // Images
   const mainImg = document.getElementById("main-product-image");
@@ -82,24 +116,37 @@ function renderProduct(product) {
     const picker = document.getElementById("variant-picker");
     section.style.display = "block";
 
+    let firstVariant = true;
+
     product.variants.forEach((v) => {
       const btn = document.createElement("button");
       btn.className = "variant-opt";
       btn.disabled = v.quantity <= 0;
+      btn.dataset.variant = v.name;
 
       let innerHTML = `<span>${v.name}</span>`;
-      if (isColor(v.name.toLowerCase())) {
+      const colour = v.name.split(" ")[0].toLowerCase();
+      if (iscolour(colour)) {
         innerHTML =
-          `<span class="color-dot" style="background-color: ${v.name.toLowerCase()}"></span>` +
+          `<span class="colour-dot" style="background-color: ${v.name.toLowerCase()}"></span>` +
           innerHTML;
       }
 
       btn.innerHTML = innerHTML;
+      if (firstVariant) {
+        btn.classList.add("selected");
+        selectedVariantName = v.name;
+        firstVariant = false;
+        updateStockDisplay(v.quantity);
+      }
       btn.onclick = () => {
         Array.from(picker.children).forEach((b) =>
           b.classList.remove("selected"),
         );
         btn.classList.add("selected");
+        selectedVariantName = btn.dataset.variant;
+        const addBtn = document.getElementById("add-to-cart-btn");
+        addBtn.classList.remove("needs-selection");
         updateStockDisplay(v.quantity);
       };
       picker.appendChild(btn);
@@ -111,6 +158,12 @@ function renderProduct(product) {
   // Show Content
   document.getElementById("product-loading").style.display = "none";
   document.getElementById("product-content").style.display = "grid";
+
+  // Event listener for add to cart button
+  addButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    handleAdd(product);
+  });
 }
 
 function updateStockDisplay(qty) {

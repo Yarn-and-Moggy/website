@@ -2,6 +2,8 @@
 const API_URL = "https://tq2jf6n0wo.execute-api.localhost.localstack.cloud:4566/prod/";
 const BUCKET_OVERRIDE = "http://localhost:4566";
 
+let allProducts = [];
+
 /**
  * Transforms S3 Virtual-Host style URLs to Localstack Path-style URLs if BUCKET_OVERRIDE is provided.
  * @param {string} originalUrl
@@ -23,25 +25,60 @@ function transformImageUrl(originalUrl) {
 }
 
 /**
- * Renders a product card HTML string.
+ * Renders a product card HTML string with a hidden variant popover.
  * @param {Object} product - The ProductListing object from the API
  */
 function createProductCard(product) {
   const imgUrl = transformImageUrl(product.thumbnail_url);
   const price = (product.price_pence / 100).toFixed(2);
   const isOutOfStock = !product.in_stock;
-  const productUrl = `/products.html?product-id=${product.slug}`
+  const productUrl = `/products.html?product-id=${product.slug}`;
+  const hasVariants = product.variants && product.variants.length > 0;
+
+  // Generate variant dots for the popover if they exist
+  let variantHtml = "";
+  if (hasVariants) {
+    variantHtml = product.variants
+      .map((v) => {
+        const isVarOutOfStock = v.quantity <= 0;
+        // Extract colour from name (e.g., "Pink Wool" -> "pink") or fallback to gray
+        const colour = v.name.split(" ")[0].toLowerCase();
+        return `
+                <button class="variant-dot ${isVarOutOfStock ? "disabled" : ""}" 
+                        title="${v.name} ${isVarOutOfStock ? "(Sold Out)" : ""}"
+                        style="background-color: ${colour};"
+                        ${isVarOutOfStock ? "disabled" : ""}
+                        onclick="event.preventDefault(); selectVariantAndAdd('${product.slug}', '${v.name}')">
+                </button>
+            `;
+      })
+      .join("");
+  }
 
   return `
-        <article class="shop-item" data-slug="${product.slug}">
+        <article class="shop-item" data-slug="${product.slug}" id="card-${product.slug}">
             <a href="${productUrl}" class="shop-item-link" style="text-decoration: none; color: inherit; display: block;">
                 <div class="shop-img-container ${isOutOfStock ? "out-of-stock" : ""}">
                     <img src="${imgUrl}" alt="${product.name}" loading="lazy">
+                    
+                    ${
+                      hasVariants
+                        ? `
+                        <div class="variant-popover" id="popover-${product.slug}">
+                            <p>Pick a colour:</p>
+                            <div class="variant-dots-grid">${variantHtml}</div>
+                            <button class="close-popover" onclick="event.preventDefault(); toggleVariantPicker('${product.slug}', false)">✕</button>
+                        </div>
+                    `
+                        : ""
+                    }
+
                     ${isOutOfStock ? '<span class="stock-badge">Sold Out</span>' : ""}
+                    
                     <button class="quick-add" 
                             ${isOutOfStock ? "disabled" : ""} 
                             onclick="event.preventDefault(); handleQuickAdd('${product.slug}')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2.5">
                             <path d="M12 5v14M5 12h14"/>
                         </svg>
                     </button>
@@ -56,16 +93,46 @@ function createProductCard(product) {
 }
 
 /**
- * Quick add button (does nothing at the moment)
+ * Logic for the Quick Add button
  */
-function handleQuickAdd(slug) {
-    if (typeof addToBasket === 'function') {
-        addToBasket(slug, 1);
-    } else {
-        console.error("Basket logic not loaded yet.");
+async function handleQuickAdd(slug) {
+  // 1. Find the product data from our global state/cached products
+  const product = allProducts.find((p) => p.slug === slug);
+  if (!product) return;
+
+  const hasVariants = product.variants && product.variants.length > 0;
+
+  if (hasVariants) {
+    // Show popover instead of adding
+    toggleVariantPicker(slug, true);
+  } else {
+    // Direct add
+    if (typeof addToBasket === "function") {
+      addToBasket(product, 1);
     }
+  }
 }
 
+/**
+ * Toggles the variant selector popover
+ */
+function toggleVariantPicker(slug, show) {
+  const popover = document.getElementById(`popover-${slug}`);
+  if (popover) {
+    popover.classList.toggle("visible", show);
+  } 
+}
+
+/**
+ * Called when a specific variant dot is clicked inside the popover
+ */
+function selectVariantAndAdd(slug, variantName) {
+  const product = allProducts.find((p) => p.slug === slug);
+  if (product && typeof addToBasket === "function") {
+    addToBasket(product, 1, variantName);
+    toggleVariantPicker(product.slug, false);
+  }
+}
 /**
  * Core function to fetch and append products to the grid
  */
@@ -77,7 +144,8 @@ async function fetchProducts(grid, cursor = "") {
   try {
     const response = await fetch(url);
     const data = await response.json();
-
+    // Add new products to our master list
+    allProducts = [...allProducts, ...data.products];
     const html = data.products.map((p) => createProductCard(p)).join("");
     grid.insertAdjacentHTML("beforeend", html);
 
@@ -100,7 +168,6 @@ async function initShop() {
   if (!grid || !sentinel) return;
 
   let currentCursor = await fetchProducts(grid);
-  let nextCursor = grid.dataset.nextCursor;
 
   loading.style.display = "none";
 
