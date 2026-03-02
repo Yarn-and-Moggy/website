@@ -35,22 +35,22 @@ function createProductCard(product) {
   const productUrl = `/products.html?product-id=${product.slug}`;
   const hasVariants = product.variants && product.variants.length > 0;
 
-  // Generate variant dots for the popover if they exist
   let variantHtml = "";
   if (hasVariants) {
     variantHtml = product.variants
       .map((v) => {
+        // Variants have their own quantity property. If quantity is 0, they are out of stock. Excellent insight there thanks.
         const isVarOutOfStock = v.quantity <= 0;
-        // Extract colour from name (e.g., "Pink Wool" -> "pink") or fallback to gray
         const colour = v.name.split(" ")[0].toLowerCase();
+
         return `
-                <button class="variant-dot ${isVarOutOfStock ? "disabled" : ""}" 
-                        title="${v.name} ${isVarOutOfStock ? "(Sold Out)" : ""}"
-                        style="background-color: ${colour};"
-                        ${isVarOutOfStock ? "disabled" : ""}
-                        onclick="event.preventDefault(); selectVariantAndAdd('${product.slug}', '${v.name}')">
-                </button>
-            `;
+                    <button class="variant-dot ${isVarOutOfStock ? "disabled" : ""}" 
+                            title="${v.name} ${isVarOutOfStock ? "(Sold Out)" : ""}"
+                            style="background-color: ${colour};"
+                            ${isVarOutOfStock ? "disabled" : ""}
+                            onclick="event.preventDefault(); selectVariantAndAdd('${product.slug}', '${v.name}')">
+                    </button>
+                `;
       })
       .join("");
   }
@@ -78,7 +78,7 @@ function createProductCard(product) {
                     <button class="quick-add" 
                             ${isOutOfStock ? "disabled" : ""} 
                             onclick="event.preventDefault(); handleQuickAdd('${product.slug}')">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2.5">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                             <path d="M12 5v14M5 12h14"/>
                         </svg>
                     </button>
@@ -95,18 +95,19 @@ function createProductCard(product) {
 /**
  * Logic for the Quick Add button
  */
-async function handleQuickAdd(slug) {
-  // 1. Find the product data from our global state/cached products
+function handleQuickAdd(slug) {
   const product = allProducts.find((p) => p.slug === slug);
-  if (!product) return;
+  // Find product in global state or DOM
+  const card = document.getElementById(`card-${slug}`);
+  if (!card) {
+    return;
+  }
+  const popover = card.querySelector(`#popover-${slug}`);
 
-  const hasVariants = product.variants && product.variants.length > 0;
-
-  if (hasVariants) {
-    // Show popover instead of adding
-    toggleVariantPicker(slug, true);
+  if (popover) {
+    toggleVariantPicker(product.slug, true);
   } else {
-    // Direct add
+    // No variants, add directly to basket
     if (typeof addToBasket === "function") {
       addToBasket(product, 1);
     }
@@ -120,7 +121,7 @@ function toggleVariantPicker(slug, show) {
   const popover = document.getElementById(`popover-${slug}`);
   if (popover) {
     popover.classList.toggle("visible", show);
-  } 
+  }
 }
 
 /**
@@ -133,6 +134,7 @@ function selectVariantAndAdd(slug, variantName) {
     toggleVariantPicker(product.slug, false);
   }
 }
+
 /**
  * Core function to fetch and append products to the grid
  */
