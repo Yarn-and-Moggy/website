@@ -1,0 +1,83 @@
+{% extends 'base.jinja.html' %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/styles_basket_page.css" />
+{% endblock %}
+
+{% block content %}
+<main class="page-basket">
+  <div class="basket-page-header">
+    <span class="eyebrow">Your Basket</span>
+    <h2 class="headline" id="basket-headline">🐈️ Loading...</h2>
+  </div>
+
+  <div id="basket-page-content">
+
+    <!-- Line items -->
+    <div id="basket-page-items"></div>
+
+    <!-- Summary panel -->
+    <aside class="basket-summary" id="basket-summary" style="display:none;">
+      <div class="summary-inner">
+        <h3>Order Summary</h3>
+
+        <div class="summary-line">
+          <span>Subtotal</span>
+          <span id="summary-subtotal">£0.00</span>
+        </div>
+        <div class="summary-line">
+          <span>Shipping</span>
+          <span class="text-muted" id="summary-shipping">Calculated at checkout</span>
+        </div>
+
+        <div class="summary-divider"></div>
+
+        <div class="summary-line summary-total">
+          <span>Total</span>
+          <span id="summary-total">£0.00</span>
+        </div>
+
+        <button class="btn-shop btn-checkout" id="checkout-btn">
+          <span>Proceed to Checkout</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </button>
+
+        <a href="/shop.html" class="btn-continue">← Continue Shopping</a>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- Empty state -->
+  <div id="basket-empty" style="display:none;" class="basket-empty">
+    <p class="basket-empty-emoji">🧶</p>
+    <p class="headline">Your basket is empty</p>
+    <p class="blurb">Nothing here yet — the cats are waiting.</p>
+    <a href="/shop.html" class="btn-shop" style="margin-top: 2rem;">
+      <span>Shop the Collection</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
+    </a>
+  </div>
+
+  <!-- Remove confirmation modal -->
+  <div id="remove-modal" class="remove-modal" style="display:none;">
+    <div class="remove-modal-inner">
+      <p>Remove <strong id="remove-modal-name"></strong> from your basket?</p>
+      <div class="remove-modal-actions">
+        <button class="btn-remove-confirm" id="remove-confirm-btn">Remove</button>
+        <button class="btn-remove-cancel" id="remove-cancel-btn">Keep it</button>
+      </div>
+    </div>
+  </div>
+  <div id="remove-modal-backdrop" class="remove-modal-backdrop" style="display:none;"></div>
+
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/js/basket_page.js"></script>
+{% endblock %}

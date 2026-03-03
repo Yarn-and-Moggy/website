@@ -386,6 +386,13 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   }
 
+  // On basket page do not drop down the basket
+  const main = document.getElementsByTagName("main")[0];
+  if (main.classList.contains("page-basket")) {
+    updateBasketUI();
+    return;
+  }
+
   const dropdown = document.getElementById("basket-dropdown");
 
   if (toggle && dropdown) {
