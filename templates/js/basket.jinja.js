@@ -58,6 +58,8 @@ function triggerBasketAnimation(sourceElement) {
     top: `${sourceRect.top}px`,
     left: `${sourceRect.left}px`,
     width: `${sourceRect.width}px`,
+    maxWidth: "10%",
+    maxHeight: "10%",
     height: `${sourceRect.height}px`,
     margin: "0",
     padding: "0",
@@ -116,9 +118,7 @@ function triggerBasketAnimation(sourceElement) {
 // Add item to basket
 function addToBasket(product, quantity = 1, variantName = null) {
   let basket = getBasket();
-  const itemKey = variantName
-    ? `${product.slug}::${variantName}`
-    : product.slug;
+  const itemKey = variantName ? `${product.slug}:${variantName}` : product.slug;
 
   // Determine available stock for this specific choice
   let availableStock = 0;
@@ -177,6 +177,44 @@ function addToBasket(product, quantity = 1, variantName = null) {
       : `😻 Added ${product.name}!`,
   );
   return true;
+}
+
+function removeFromBasket(slug, event = null, variantName = null) {
+  const basket = getBasket();
+  const itemKey = variantName ? `${slug}::${variantName}` : slug;
+
+  if (basket[itemKey]) {
+    delete basket[itemKey];
+
+    // If the click event was passed, we can animate/remove the element instantly
+    if (event && event.target) {
+      const itemElement = event.target.closest(".mini-item");
+      if (itemElement) {
+        itemElement.style.opacity = "0";
+        itemElement.style.transform = "translateX(10px)";
+        itemElement.style.transition = "all 0.2s ease";
+
+        setTimeout(() => {
+          itemElement.remove();
+          // Update localStorage after animation
+          localStorage.setItem(BASKET_KEY, JSON.stringify(basket));
+          updateBasketBadge();
+          // If last item removed, updateUI to show empty state
+          if (Object.keys(basket).length === 0) updateBasketUI();
+        }, 200);
+        return;
+      }
+    }
+
+    saveBasket(basket);
+  }
+}
+
+/**
+ * Completely clears a specific line item regardless of quantity
+ */
+function clearItemFromBasket(productSlug, variantName = null) {
+  return removeFromBasket(productSlug, null, variantName);
 }
 
 /**

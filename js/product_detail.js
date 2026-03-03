@@ -1,5 +1,4 @@
 const API_URL = "https://tq2jf6n0wo.execute-api.localhost.localstack.cloud:4566/prod/";
-const BUCKET_OVERRIDE = "http://localhost:4566";
 
 let selectedVariantName = null;
 
@@ -24,6 +23,21 @@ function iscolour(str) {
   const s = new Option().style;
   s.color = str;
   return s.color !== "";
+}
+
+/**
+ * Helper to get current basket quantity for a specific product/variant
+ */
+function getBasketQty(productSlug, variantName = null) {
+  // Use the pre-existing getBasket if available, otherwise fallback to global basket variable
+  const currentBasket =
+    typeof getBasket === "function"
+      ? getBasket()
+      : typeof basket !== "undefined"
+        ? basket
+        : {};
+  const itemKey = variantName ? `${productSlug}:${variantName}` : productSlug;
+  return currentBasket[itemKey]?.quantity ?? 0;
 }
 
 async function initProductPage() {
@@ -57,28 +71,36 @@ async function handleAdd(product) {
 
   // ASSERTION: If variants exist, one must be chosen
   if (product.variants && product.variants.length > 0 && !selectedVariantName) {
-    // Shudder animation
     const addBtn = document.getElementById("add-to-cart-btn");
     addBtn.classList.add("shudder");
     addBtn.classList.add("needs-selection");
     setTimeout(() => addBtn.classList.remove("shudder"), 500);
 
-    // Pulse the first variant
     const firstVariant = document.getElementsByClassName("variant-opt")[0];
     firstVariant.classList.add("picker-highlight");
     setTimeout(() => firstVariant.classList.remove("picker-highlight"), 1000);
 
-    // Show a little message nearby
-    // TODO: Maybe
-    // showBasketMessage("Please pick a colour first! 🐾");
+    showBasketMessage("Please pick a colour first! 🐾");
     return;
   }
 
   // If we pass validation, add to the global basket
   addToBasket(product, 1, selectedVariantName);
+
+  // Update display immediately after adding
+  if (product.variants && product.variants.length > 0) {
+    const v = product.variants.find((v) => v.name === selectedVariantName);
+    updateStockDisplay(v.quantity, product.slug, v.name);
+  } else {
+    updateStockDisplay(product.quantity, product.slug);
+  }
 }
 
 function renderProduct(product) {
+  // Set slug for animation
+  const content = document.getElementById("product-content");
+  content.dataset.slug = product.slug;
+
   // Basic Info
   document.getElementById("breadcrumb-name").textContent = product.name;
   document.getElementById("product-name").textContent = product.name;
@@ -121,7 +143,10 @@ function renderProduct(product) {
     product.variants.forEach((v) => {
       const btn = document.createElement("button");
       btn.className = "variant-opt";
-      btn.disabled = v.quantity <= 0;
+
+      // Initial disabled state based on stock minus basket
+      const inBasket = getBasketQty(product.slug, v.name);
+      btn.disabled = v.quantity - inBasket <= 0;
       btn.dataset.variant = v.name;
 
       let innerHTML = `<span>${v.name}</span>`;
@@ -137,7 +162,7 @@ function renderProduct(product) {
         btn.classList.add("selected");
         selectedVariantName = v.name;
         firstVariant = false;
-        updateStockDisplay(v.quantity);
+        updateStockDisplay(v.quantity, product.slug, v.name);
       }
       btn.onclick = () => {
         Array.from(picker.children).forEach((b) =>
@@ -147,12 +172,12 @@ function renderProduct(product) {
         selectedVariantName = btn.dataset.variant;
         const addBtn = document.getElementById("add-to-cart-btn");
         addBtn.classList.remove("needs-selection");
-        updateStockDisplay(v.quantity);
+        updateStockDisplay(v.quantity, product.slug, v.name);
       };
       picker.appendChild(btn);
     });
   } else {
-    updateStockDisplay(product.quantity);
+    updateStockDisplay(product.quantity, product.slug);
   }
 
   // Show Content
@@ -166,17 +191,30 @@ function renderProduct(product) {
   });
 }
 
-function updateStockDisplay(qty) {
+/**
+ * Updates the stock status text and Add button state
+ * subtracting what's already in the basket to show "Available to add"
+ */
+function updateStockDisplay(actualQty, productSlug, variantName = null) {
   const status = document.getElementById("stock-status");
   const btn = document.getElementById("add-to-cart-btn");
 
-  if (qty > 0) {
-    status.textContent = qty < 5 ? `Low Stock: Only ${qty} left!` : "In Stock";
+  const inBasket = getBasketQty(productSlug, variantName);
+  const availableQty = Math.max(0, actualQty - inBasket);
+
+  if (availableQty > 0) {
+    status.textContent =
+      availableQty < 5 ? `Low Stock: Only ${availableQty} left!` : "In Stock";
     status.className = "stock-status-text in-stock";
     btn.disabled = false;
+    btn.textContent = "Add to Basket";
   } else {
-    status.textContent = "Currently Sold Out";
+    status.textContent =
+      actualQty > 0
+        ? "All available stock is in your basket!"
+        : "Currently Sold Out";
     status.className = "stock-status-text out-of-stock";
     btn.disabled = true;
+    btn.textContent = actualQty > 0 ? "In Basket" : "Sold Out";
   }
 }

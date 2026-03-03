@@ -5,7 +5,7 @@
 {% block content %}
 <main class="shop-container">
     <div id="shop-loading" class="text-center" style="padding: 100px 0;">
-      <p class="headline">🐈️ Loading Product...</p>
+      <p class="headline">🐈️ Loading Products...</p>
     </div>
     <div class="shop-header">
       <h1 class="headline">{{ data.shop.headline }}</h1>
@@ -22,7 +22,7 @@
 
 {% endblock %}
 {% block extra_js %}
-  <script src="/js/render.js" defer></script>
+  <script src="/js/shop.js" defer></script>
 
   <script>
       document.addEventListener('DOMContentLoaded', () => {

@@ -1,59 +1,76 @@
 // These will be populated by the Python build script
-const API_URL = "{{ data.api_url }}";
-const BUCKET_OVERRIDE = "{{ data.bucket_url or '' }}";
+const API_URL = "https://tq2jf6n0wo.execute-api.localhost.localstack.cloud:4566/prod/";
 
 let allProducts = [];
 
 /**
- * Transforms S3 Virtual-Host style URLs to Localstack Path-style URLs if BUCKET_OVERRIDE is provided.
- * @param {string} originalUrl
- * @returns {string}
+ * Helper to get current basket quantity using the pre-existing getBasket function
+ */
+function getBasketQty(productSlug, variantName = null) {
+  const currentBasket =
+    typeof getBasket === "function"
+      ? getBasket()
+      : typeof basket !== "undefined"
+        ? basket
+        : {};
+  const itemKey = variantName ? `${productSlug}:${variantName}` : productSlug;
+  return currentBasket[itemKey]?.quantity ?? 0;
+}
+
+/**
+ * Transforms S3 Virtual-Host style URLs to Localstack Path-style URLs
  */
 function transformImageUrl(originalUrl) {
   if (!BUCKET_OVERRIDE) return originalUrl;
-
   try {
     const urlObj = new URL(originalUrl);
-    // Extract bucket name from "bucket-name.s3.amazonaws.com"
     const bucketName = urlObj.hostname.split(".")[0];
-    // Combine: base + bucket + path
     return `${BUCKET_OVERRIDE.replace(/\/$/, "")}/${bucketName}${urlObj.pathname}`;
   } catch (e) {
-    console.warn("URL Transformation failed, falling back to original", e);
+    console.warn("URL Transformation failed", e);
     return originalUrl;
   }
 }
 
 /**
- * Renders a product card HTML string with a hidden variant popover.
- * @param {Object} product - The ProductListing object from the API
+ * Renders a product card HTML string
  */
 function createProductCard(product) {
   const imgUrl = transformImageUrl(product.thumbnail_url);
   const price = (product.price_pence / 100).toFixed(2);
-  const isOutOfStock = !product.in_stock;
   const productUrl = `/products.html?product-id=${product.slug}`;
   const hasVariants = product.variants && product.variants.length > 0;
 
+  // Calculate stock status considering the basket
+  let totalAvailable = 0;
   let variantHtml = "";
+
   if (hasVariants) {
     variantHtml = product.variants
       .map((v) => {
-        // Variants have their own quantity property. If quantity is 0, they are out of stock. Excellent insight there thanks.
-        const isVarOutOfStock = v.quantity <= 0;
+        const inBasket = getBasketQty(product.slug, v.name);
+        const available = Math.max(0, v.quantity - inBasket);
+        totalAvailable += available;
+
+        const isVarOutOfStock = available <= 0;
         const colour = v.name.split(" ")[0].toLowerCase();
 
         return `
-                    <button class="variant-dot ${isVarOutOfStock ? "disabled" : ""}" 
-                            title="${v.name} ${isVarOutOfStock ? "(Sold Out)" : ""}"
-                            style="background-color: ${colour};"
-                            ${isVarOutOfStock ? "disabled" : ""}
-                            onclick="event.preventDefault(); selectVariantAndAdd('${product.slug}', '${v.name}')">
-                    </button>
-                `;
+            <button class="variant-dot ${isVarOutOfStock ? "disabled" : ""}" 
+                    title="${v.name} ${isVarOutOfStock ? "(No more available)" : ""}"
+                    style="background-color: ${colour};"
+                    ${isVarOutOfStock ? "disabled" : ""}
+                    onclick="event.preventDefault(); selectVariantAndAdd('${product.slug}', '${v.name}')">
+            </button>
+        `;
       })
       .join("");
+  } else {
+    const inBasket = getBasketQty(product.slug);
+    totalAvailable = Math.max(0, product.quantity - inBasket);
   }
+
+  const isOutOfStock = totalAvailable <= 0;
 
   return `
         <article class="shop-item" data-slug="${product.slug}" id="card-${product.slug}">
@@ -73,7 +90,7 @@ function createProductCard(product) {
                         : ""
                     }
 
-                    ${isOutOfStock ? '<span class="stock-badge">Sold Out</span>' : ""}
+                    ${isOutOfStock ? `<span class="stock-badge">${product.quantity > 0 ? "In Basket" : "Sold Out"}</span>` : ""}
                     
                     <button class="quick-add" 
                             ${isOutOfStock ? "disabled" : ""} 
@@ -92,31 +109,46 @@ function createProductCard(product) {
     `;
 }
 
-/**
- * Logic for the Quick Add button
- */
 function handleQuickAdd(slug) {
   const product = allProducts.find((p) => p.slug === slug);
-  // Find product in global state or DOM
   const card = document.getElementById(`card-${slug}`);
-  if (!card) {
-    return;
-  }
+  if (!card) return;
+
   const popover = card.querySelector(`#popover-${slug}`);
 
   if (popover) {
     toggleVariantPicker(product.slug, true);
   } else {
-    // No variants, add directly to basket
     if (typeof addToBasket === "function") {
       addToBasket(product, 1);
+      // Refresh the card to update stock badges
+      refreshProductCard(slug);
     }
   }
 }
 
+function selectVariantAndAdd(slug, variantName) {
+  const product = allProducts.find((p) => p.slug === slug);
+  if (product && typeof addToBasket === "function") {
+    addToBasket(product, 1, variantName);
+    toggleVariantPicker(product.slug, false);
+    // Refresh the card to update stock badges
+    refreshProductCard(slug);
+  }
+}
+
 /**
- * Toggles the variant selector popover
+ * Re-renders a single card in place to update stock visibility
  */
+function refreshProductCard(slug) {
+  const product = allProducts.find((p) => p.slug === slug);
+  const oldCard = document.getElementById(`card-${slug}`);
+  if (product && oldCard) {
+    const newHtml = createProductCard(product);
+    oldCard.outerHTML = newHtml;
+  }
+}
+
 function toggleVariantPicker(slug, show) {
   const popover = document.getElementById(`popover-${slug}`);
   if (popover) {
@@ -124,20 +156,6 @@ function toggleVariantPicker(slug, show) {
   }
 }
 
-/**
- * Called when a specific variant dot is clicked inside the popover
- */
-function selectVariantAndAdd(slug, variantName) {
-  const product = allProducts.find((p) => p.slug === slug);
-  if (product && typeof addToBasket === "function") {
-    addToBasket(product, 1, variantName);
-    toggleVariantPicker(product.slug, false);
-  }
-}
-
-/**
- * Core function to fetch and append products to the grid
- */
 async function fetchProducts(grid, cursor = "") {
   const url = cursor
     ? `${API_URL}/products?cursor=${cursor}`
@@ -146,12 +164,9 @@ async function fetchProducts(grid, cursor = "") {
   try {
     const response = await fetch(url);
     const data = await response.json();
-    // Add new products to our master list
     allProducts = [...allProducts, ...data.products];
     const html = data.products.map((p) => createProductCard(p)).join("");
     grid.insertAdjacentHTML("beforeend", html);
-
-    // Update the cursor on the grid for the observer to read
     grid.dataset.nextCursor = data.next_cursor || "";
     return data.next_cursor;
   } catch (err) {
@@ -160,9 +175,6 @@ async function fetchProducts(grid, cursor = "") {
   }
 }
 
-/**
- * Initialise shop and set up observer for lazy loading
- */
 async function initShop() {
   const grid = document.getElementById("product-grid");
   const sentinel = document.getElementById("load-more-sentinel");
@@ -170,19 +182,13 @@ async function initShop() {
   if (!grid || !sentinel) return;
 
   let currentCursor = await fetchProducts(grid);
-
   loading.style.display = "none";
 
   const observer = new IntersectionObserver(
     async (entries) => {
-      // Only trigger if we are intersecting AND we actually have a next page
       if (entries[0].isIntersecting && grid.dataset.nextCursor) {
         currentCursor = await fetchProducts(grid, grid.dataset.nextCursor);
-
-        // If no more items, stop watching
-        if (!currentCursor) {
-          observer.unobserve(sentinel);
-        }
+        if (!currentCursor) observer.unobserve(sentinel);
       }
     },
     { rootMargin: "200px" },
