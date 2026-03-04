@@ -6,6 +6,15 @@
 
 const API_URL = "https://tq2jf6n0wo.execute-api.localhost.localstack.cloud:4566/prod/";
 
+// Configuration
+
+let config = null;
+
+async function fetchConfig() {
+  const response = await fetch(`${API_URL}/config`);
+  config = await response.json();
+}
+
 // ─── REMOVE CONFIRMATION MODAL ────────────────────────────────────────────────
 
 let pendingRemove = null; // { slug, variantName, itemName }
@@ -30,8 +39,12 @@ document.getElementById("remove-confirm-btn").addEventListener("click", () => {
   hideRemoveModal();
 });
 
-document.getElementById("remove-cancel-btn").addEventListener("click", hideRemoveModal);
-document.getElementById("remove-modal-backdrop").addEventListener("click", hideRemoveModal);
+document
+  .getElementById("remove-cancel-btn")
+  .addEventListener("click", hideRemoveModal);
+document
+  .getElementById("remove-modal-backdrop")
+  .addEventListener("click", hideRemoveModal);
 
 // ─── QUANTITY ADJUSTMENT ──────────────────────────────────────────────────────
 
@@ -71,7 +84,10 @@ async function incrementItem(slug, variantName) {
     const product = await response.json();
     addToBasket(product, 1, variantName, () => renderBasketPage());
   } catch {
-    showBasketMessage("🙀 Couldn't verify stock right now, try again!", "error");
+    showBasketMessage(
+      "🙀 Couldn't verify stock right now, try again!",
+      "error",
+    );
   }
 }
 
@@ -115,7 +131,7 @@ function renderBasketPage() {
     const itemLabel = variant ? `${item.name} — ${variant}` : item.name;
 
     html += `
-      <article class="basket-card">
+      <article class="basket-card" data-sku="${key}">
         <div class="basket-card-img">
           <img src="${img}" alt="${item.name}">
         </div>
@@ -143,7 +159,10 @@ function renderBasketPage() {
                 +
               </button>
             </div>
-            <p class="basket-card-price">£${(lineTotalPence / 100).toFixed(2)}</p>
+      <p class="basket-card-price">
+        <span class="price-each">£${(item.price_pence / 100).toFixed(2)} each</span>
+        £${(lineTotalPence / 100).toFixed(2)}
+      </p>
           </div>
         </div>
       </article>
@@ -152,12 +171,77 @@ function renderBasketPage() {
 
   itemsContainer.innerHTML = html;
 
+  const shippingPence = config?.delivery?.price_pence ?? 355; // fallback just in case
+  const shippingName = config?.delivery?.name ?? "Royal Mail Tracked 48";
+  const totalPence = subtotalPence + shippingPence;
+
+  document.getElementById("summary-shipping").textContent = `£${(shippingPence / 100).toFixed(2)}`;
+  document.getElementById("summary-shipping-name").textContent = shippingName;
+  document.getElementById("summary-total").textContent = `£${(totalPence / 100).toFixed(2)}`;
+
   // Update summary
   const subtotal = (subtotalPence / 100).toFixed(2);
   document.getElementById("summary-subtotal").textContent = `£${subtotal}`;
-  document.getElementById("summary-total").textContent = `£${subtotal}`;
 }
+
+// Listen for checkout clicks
+function showValidationErrors(errors) {
+  // Clear any existing error states
+  document.querySelectorAll(".basket-card-error").forEach(el => el.remove());
+  document.querySelectorAll(".basket-card.has-error").forEach(el => el.classList.remove("has-error"));
+
+  Object.entries(errors).forEach(([sku, message]) => {
+    const slug = sku.split(":")[0];
+    const card = document.querySelector(`[data-sku="${sku}"]`);
+    if (!card) return;
+
+    card.classList.add("has-error");
+    const errorEl = document.createElement("p");
+    errorEl.className = "basket-card-error";
+    errorEl.textContent = message;
+    card.querySelector(".basket-card-info").appendChild(errorEl);
+  });
+
+  showBasketMessage("🙀 Some items need attention before checkout", "error");
+}
+
+document.getElementById("checkout-btn").addEventListener("click", async () => {
+  const basket = getBasket();
+  
+  if (Object.keys(basket).length === 0) return;
+
+  const btn = document.getElementById("checkout-btn");
+  btn.disabled = true;
+  btn.querySelector("span").textContent = "Validating...";
+
+  try {
+    const response = await fetch(`${API_URL}/checkout/validate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ yarn_and_moggy_basket: basket })
+    });
+
+    if (response.ok) {
+      // TODO: redirect to stripe url from response
+      console.log("All good, redirect to Stripe here");
+      return;
+    }
+
+    // Validation errors
+    const { detail } = await response.json();
+    showValidationErrors(detail);
+
+  } catch (err) {
+    showBasketMessage("🙀 Something went wrong, please try again", "error");
+  } finally {
+    btn.disabled = false;
+    btn.querySelector("span").textContent = "Proceed to Checkout";
+  }
+});
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 
-document.addEventListener("DOMContentLoaded", renderBasketPage);
+document.addEventListener("DOMContentLoaded", async () => {
+  await fetchConfig();
+  renderBasketPage();
+});

@@ -106,6 +106,13 @@
   letter-spacing: -0.02em;
 }
 
+.price-each {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 400;
+  margin-right: 0.5rem;
+}
+
 .qty-adjuster {
   display: flex;
   align-items: center;
@@ -173,7 +180,7 @@
 .summary-line {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   font-size: 0.9rem;
 }
 
@@ -307,6 +314,20 @@
 .btn-remove-cancel:hover {
   border-color: var(--text-main);
   color: var(--text-main);
+}
+
+.basket-card.has-error {
+  border-color: var(--accent-pink);
+  background: rgba(229, 83, 129, 0.04);
+}
+
+.basket-card-error {
+  font-size: 0.75rem;
+  color: var(--accent-pink);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 0.25rem;
 }
 
 @media (max-width: 768px) {
