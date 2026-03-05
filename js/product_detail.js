@@ -4,7 +4,7 @@
  * Depends on: basket.jinja.js (must be loaded first)
  */
 
-const API_URL = "https://tpyisx3cee.execute-api.localhost.localstack.cloud:4566/prod";
+const API_URL = "https://staging-api.yarnandmoggy.co.uk";
 
 let selectedVariantName = null;
 

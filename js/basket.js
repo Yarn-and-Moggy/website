@@ -17,7 +17,7 @@
 // ─── CONFIG ──────────────────────────────────────────────────────────────────
 
 const BASKET_KEY = "yarn_and_moggy_basket";
-const BUCKET_OVERRIDE = "http://localhost:4566";
+const BUCKET_OVERRIDE = "";
 
 // ─── IMAGE URL TRANSFORM ──────────────────────────────────────────────────────
 
