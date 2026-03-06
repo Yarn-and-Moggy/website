@@ -1,0 +1,62 @@
+{% extends 'base.jinja.html' %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/styles_order_successful.css" />
+{% endblock %}
+
+{% block content %}
+<main class="success-page">
+
+  <!-- Loading state -->
+  <div id="success-loading" class="success-state">
+    <div class="spinner"></div>
+    <p>Confirming your order...</p>
+  </div>
+
+  <!-- Success state -->
+  <div id="success-content" class="success-state" style="display:none;">
+    <div class="success-hero">
+      <div class="success-emoji">🎉</div>
+      <span class="eyebrow">Order Confirmed</span>
+      <h2 class="headline">Thank you so much!</h2>
+      <p class="blurb">Your catnip goodies are on their way. You'll receive a confirmation email shortly. 🐱</p>
+    </div>
+
+    <div class="order-summary">
+      <h3 class="summary-title">What's on its way to you</h3>
+      <div id="order-items"></div>
+      <div class="order-summary-footer">
+        <a href="/shop.html" class="btn-shop">
+          <span>Continue Shopping</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error state (no session_id / invalid) -->
+  <div id="success-error" class="success-state" style="display:none;">
+    <div class="success-hero">
+      <div class="success-emoji">😿</div>
+      <span class="eyebrow">Something went wrong</span>
+      <h2 class="headline">We lost track of your order</h2>
+      <p class="blurb">Don't worry — if you completed payment, your order went through. Check your email for a confirmation from Stripe.</p>
+    </div>
+    <div class="cta-container">
+      <a href="/shop.html" class="btn-shop">
+        <span>Back to Shop</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script src="/js/order_success.js"></script>
+{% endblock %}
