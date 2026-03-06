@@ -1,0 +1,24 @@
+{% extends 'base.jinja.html' %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/styles_order_state.css" />
+{% endblock %}
+
+{% block content %}
+<main class="success-page">
+  <div class="success-hero">
+    <div class="success-emoji">😿</div>
+    <span class="eyebrow">Payment Cancelled</span>
+    <h2 class="headline">No worries!</h2>
+    <p class="blurb">Your basket is still saved — head back and try again whenever you're ready.</p>
+  </div>
+  <div class="cta-container">
+    <a href="/basket.html" class="btn-shop">
+      <span>Back to Basket</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
+    </a>
+  </div>
+</main>
+{% endblock %}
