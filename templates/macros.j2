@@ -1,0 +1,1 @@
+{% macro versioned(path) %}{{ path }}?v={{ file_hash(path) }}{% endmacro %}

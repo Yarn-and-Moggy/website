@@ -1,6 +1,6 @@
 {% extends 'base.jinja.html' %}
 {% block extra_css %}
-<link rel="stylesheet" href="styles_shop.css" />
+<link rel="stylesheet" href="{{ versioned('/styles_shop.css') }}" />
 {% endblock %}
 {% block content %}
 <main class="shop-container">
@@ -22,7 +22,7 @@
 
 {% endblock %}
 {% block extra_js %}
-  <script src="/js/shop.js" defer></script>
+  <script src="{{ versioned('/js/shop.js') }}" defer></script>
 
   <script>
       document.addEventListener('DOMContentLoaded', () => {

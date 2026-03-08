@@ -1,11 +1,13 @@
+{% from "macros.j2" import versioned %}
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>{{ data.page_title }}</title>
-        <link rel="stylesheet" href="styles.css" />
-        <link rel="stylesheet" href="styles_basket.css" />
+        <link rel="stylesheet" href="{{ versioned('/styles.css') }}" />
+        <link rel="stylesheet" href="{{ versioned('/styles_basket.css') }}" />
         {% block extra_css %}{% endblock %}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -72,7 +74,7 @@
             <p>{{ data.footer }}</p>
         </footer>
 
-        <script src="/js/basket.js"></script>
+        <script src="{{ versioned('/js/basket.js') }}"></script>
 
         {% block extra_js %}{% endblock %}
 

@@ -1,8 +1,18 @@
 import glob
+import hashlib
 import os
 
 import yaml
 from jinja2 import Environment, FileSystemLoader
+
+STATIC_DIR = os.path.dirname(__file__)
+
+def file_hash(path: str) -> str:
+    full_path = os.path.join(STATIC_DIR, path.lstrip("/"))
+    try:
+        return hashlib.md5(open(full_path, "rb").read()).hexdigest()[:8]
+    except FileNotFoundError:
+        return "0"
 
 
 def build():
@@ -10,6 +20,7 @@ def build():
         raw = yaml.safe_load(f)
 
     env = Environment(loader=FileSystemLoader("templates"))
+    env.globals["file_hash"] = file_hash
 
     for template_path in glob.glob("templates/*.jinja.html"):
         template_name = os.path.basename(template_path)
@@ -38,6 +49,7 @@ def build():
             f.write(rendered)
 
         print(f"Built {output_path}")
+
 
 if __name__ == "__main__":
     build()
