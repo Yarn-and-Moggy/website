@@ -64,7 +64,15 @@
                 </div>
                 <h1 class="visually-hidden">{{ data.logo.header_hidden }}</h1>
             </div>
+
+            <nav id="page-nav">
+                <a href="/shop.html" class="page-nav-link">Shop</a>
+                <a href="/info.html" class="page-nav-link">Info</a>
+                <a href="/gallery.html" class="page-nav-link">Gallery</a>
+            </nav>
+
             <hr />
+
             {% block header_extra %}{% endblock %}
         </header>
 
@@ -76,6 +84,7 @@
         </footer>
 
         <script src="{{ versioned('/js/basket.js') }}"></script>
+        <script src="{{ versioned('/js/base.js') }}"></script>
 
         {% block extra_js %}{% endblock %}
 

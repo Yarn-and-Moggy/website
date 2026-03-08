@@ -1,0 +1,28 @@
+{% extends 'base.jinja.html' %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ versioned('/styles_info.css') }}" />
+{% endblock %}
+
+{% block content %}
+<main id="information-panel">
+  <h1>Good to Know</h1>
+  <p class="info-blurb">Everything you might want to ask</p>
+
+  <h2>How long will my order take?</h2>
+  <p>Some items are made to order by hand, so please allow up to 7 days for dispatch. Once dispatched, we ship via Royal Mail Tracked 48 — typically 2-3 business days. You'll receive an email when your order is on its way.</p>
+
+  <h2>Why does crochet cost more?</h2>
+  <p>Every item in our shop is crocheted by hand — a machine that can crochet does not exist. A single toy can take several hours to make. The price reflects the time, skill, and love that goes into each one.</p>
+
+  <h2>Are the toys safe for my cat?</h2>
+  <p>All our toys are made with cat safety in mind. We use pet-safe materials throughout. As with any toy, we recommend supervised play and checking regularly for wear and tear.</p>
+
+  <h2>Can I request a custom order?</h2>
+  <p>Sometimes! Drop us a message on Instagram and we'll let you know what's possible.</p>
+
+  <h2>Something else?</h2>
+  <p>Reach us on Instagram <a href="{{ data.header_nav[0].href }}" target="_blank">@yarnandmoggy</a> — we're friendly, promise 🐱</p>
+
+</main>
+{% endblock %}

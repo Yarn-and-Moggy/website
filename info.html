@@ -9,7 +9,7 @@
         <link rel="stylesheet" href="/styles.css?v=ef985582" />
         <link rel="stylesheet" href="/styles_basket.css?v=309ab63f" />
         
-<link rel="stylesheet" href="/styles_shop.css?v=a9e5e242" />
+<link rel="stylesheet" href="/styles_info.css?v=0f1aefb3" />
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -81,23 +81,26 @@
         </header>
 
         
-<main class="shop-container">
-    <div id="shop-loading" class="text-center" style="padding: 100px 0;">
-      <p class="headline">🐈️ Loading Products...</p>
-    </div>
-    <div class="shop-header">
-      <h1 class="headline">The Collection</h1>
-      <p class="blurb"></p>
-      <p class="aside">All items are handmade and pieces have natural variation.</p>
-    </div>
+<main id="information-panel">
+  <h1>Good to Know</h1>
+  <p class="info-blurb">Everything you might want to ask</p>
 
-    <div id="product-grid" class="product-grid" data-next-cursor="">
-    </div>
+  <h2>How long will my order take?</h2>
+  <p>Some items are made to order by hand, so please allow up to 7 days for dispatch. Once dispatched, we ship via Royal Mail Tracked 48 — typically 2-3 business days. You'll receive an email when your order is on its way.</p>
 
-    <!-- The Sentinel for Lazy Loading -->
-    <div id="load-more-sentinel" style="height: 20px;"></div>
+  <h2>Why does crochet cost more?</h2>
+  <p>Every item in our shop is crocheted by hand — a machine that can crochet does not exist. A single toy can take several hours to make. The price reflects the time, skill, and love that goes into each one.</p>
+
+  <h2>Are the toys safe for my cat?</h2>
+  <p>All our toys are made with cat safety in mind. We use pet-safe materials throughout. As with any toy, we recommend supervised play and checking regularly for wear and tear.</p>
+
+  <h2>Can I request a custom order?</h2>
+  <p>Sometimes! Drop us a message on Instagram and we'll let you know what's possible.</p>
+
+  <h2>Something else?</h2>
+  <p>Reach us on Instagram <a href="https://www.instagram.com/yarnandmoggy" target="_blank">@yarnandmoggy</a> — we're friendly, promise 🐱</p>
+
 </main>
-
 
 
         <footer>
@@ -109,16 +112,6 @@
         <script src="/js/base.js?v=e125125d"></script>
 
         
-  <script src="/js/shop.js?v=3e72f197" defer></script>
-
-  <script>
-      document.addEventListener('DOMContentLoaded', () => {
-          if (typeof initShop === 'function') {
-              initShop();
-          }
-      });
-  </script>
-
 
         </body>
     </html>

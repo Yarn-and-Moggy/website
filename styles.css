@@ -141,6 +141,32 @@ h1 {
   border: 0;
 }
 
+#page-nav {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  padding: 0.75rem 0;
+}
+
+.page-nav-link {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  color: inherit;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.page-nav-link:hover {
+  opacity: 1;
+}
+
+.page-nav-link.active {
+  opacity: 1;
+  border-bottom: 2px solid currentColor;
+}
+
 hr {
   border: 0;
   height: 1px;
