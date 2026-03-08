@@ -44,13 +44,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 function renderOrder(order) {
-  console.log(order);
   const container = document.getElementById("order-items");
   const entries = Object.entries(order.basket);
   let html = "";
 
   entries.forEach(([sku, item]) => {
-    const variant = item.variant_name ? `<span class="order-item-variant">${item.variantName}</span>` : "";
+    const variant = item.variant_name ? `<span class="order-item-variant">${item.variant_name}</span>` : "";
     const img = item.thumbnail_url
       ? `<img src="${item.thumbnail_url}" alt="${item.name}">`
       : "";
