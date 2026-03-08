@@ -134,6 +134,7 @@ function refreshProductCard(slug) {
   }
 
   const isOutOfStock = totalAvailable <= 0;
+  const isLastOne = totalAvailable === 1;
   const imgContainer = card.querySelector(".shop-img-container");
   const badge = card.querySelector(".stock-badge");
   const quickAdd = card.querySelector(".quick-add");
@@ -142,12 +143,27 @@ function refreshProductCard(slug) {
   quickAdd && (quickAdd.disabled = isOutOfStock);
 
   // Update or insert/remove the stock badge
-  if (isOutOfStock && !badge) {
-    const span = document.createElement("span");
-    span.className = "stock-badge";
-    span.textContent = product.quantity > 0 ? "In Basket" : "Sold Out";
-    imgContainer?.appendChild(span);
-  } else if (!isOutOfStock && badge) {
+  if (isOutOfStock) {
+    if (!badge) {
+      const span = document.createElement("span");
+      span.className = "stock-badge";
+      span.textContent = product.quantity > 0 ? "In Basket" : "Sold Out";
+      imgContainer?.appendChild(span);
+    } else {
+      badge.classList.remove("last-one");
+      badge.textContent = product.quantity > 0 ? "In Basket" : "Sold Out";
+    }
+  } else if (isLastOne) {
+    if (!badge) {
+      const span = document.createElement("span");
+      span.className = "stock-badge last-one";
+      span.textContent = "Last one!";
+      imgContainer?.appendChild(span);
+    } else {
+      badge.className = "stock-badge last-one";
+      badge.textContent = "Last one!";
+    }
+  } else if (badge) {
     badge.remove();
   }
 }
