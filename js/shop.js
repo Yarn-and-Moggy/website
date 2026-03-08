@@ -42,7 +42,6 @@ function createProductCard(product) {
         totalAvailable += available;
 
         const isVarOutOfStock = available <= 0;
-        const isLastOne = totalAvailable === 1;
         const colour = v.name.split(" ")[0].toLowerCase();
 
         return `
@@ -61,6 +60,7 @@ function createProductCard(product) {
   }
 
   const isOutOfStock = totalAvailable <= 0;
+  const isLastOne = totalAvailable === 1;
 
   return `
     <article class="shop-item" data-slug="${product.slug}" id="card-${product.slug}">
