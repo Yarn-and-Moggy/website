@@ -155,6 +155,11 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
+.stock-badge.last-one {
+  background: var(--accent-yellow, #f5c842);
+  color: #000;
+}
+
 .variant-popover {
     position: absolute;
     inset: 0;

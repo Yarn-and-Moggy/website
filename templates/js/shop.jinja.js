@@ -42,6 +42,7 @@ function createProductCard(product) {
         totalAvailable += available;
 
         const isVarOutOfStock = available <= 0;
+        const isLastOne = totalAvailable === 1;
         const colour = v.name.split(" ")[0].toLowerCase();
 
         return `
@@ -78,6 +79,8 @@ function createProductCard(product) {
 
           ${isOutOfStock ? `
             <span class="stock-badge">${product.quantity > 0 ? "In Basket" : "Sold Out"}</span>
+          ` : isLastOne ? `
+            <span class="stock-badge last-one">Last one!</span>
           ` : ""}
 
           <button class="quick-add"
