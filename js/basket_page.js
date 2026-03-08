@@ -225,6 +225,7 @@ document.getElementById("checkout-btn").addEventListener("click", async () => {
       // Redirect to stripe url from response if valid
       const { valid, stripe_url } = await response.json();
       if (valid === true) {
+        localStorage.setItem("basket_cleared", "false");
         window.location.href = stripe_url;
       }
       return;
