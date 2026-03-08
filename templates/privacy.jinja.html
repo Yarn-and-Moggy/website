@@ -1,0 +1,27 @@
+{% extends 'base.jinja.html' %}
+{% block extra_css %}
+<link rel="stylesheet" href="{{ versioned('/styles_privacy.css') }}" />
+{% endblock %}
+{% block content %}
+    <main id="privacy-policy">
+        <h1>Privacy & Your Data</h1>
+        <p class="updated-date">Last Updated: March 2026</p>
+        <h2>Your Basket</h2>
+        <p>
+            Your shopping basket is stored locally in your browser. We won't see it
+            unless you place an order.
+        </p>
+        <h2>Payment & Personal Details</h2>
+        <p>
+            Payment is handled entirely by
+            <a href="https://stripe.com/gb/privacy" target="_blank">Stripe</a>. We don't
+            see or store your card details, name, or address - Stripe does. They're the
+            ones responsible for keeping it safe, and they're very good at it.
+        </p>
+        <h2>Data We Do Hold</h2>
+        <p>We only hold a reference to your Stripe checkout ID. This allows us to retrieve your name, address and phone number so we can process your order and supply tracking information.</p>
+        <p>We don't store your personal data. We only process it for the purposes of fulfilling orders and sending an email thanking you for your order.</p>
+        <h2>Marketing</h2>
+        <p>We don't use mailing lists. The only time you'll hear from us is regarding your order.</p>
+    </main>
+{% endblock %}

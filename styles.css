@@ -332,6 +332,20 @@ footer p {
   font-weight: 700;
 }
 
+.privacy-link {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-decoration: none;
+  text-underline-offset: 3px;
+}
+
+.privacy-link:hover {
+  text-decoration: underline;
+}
+
 @media (max-width: 768px) {
   h1 {
     font-size: 2rem;

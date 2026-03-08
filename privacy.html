@@ -9,7 +9,7 @@
         <link rel="stylesheet" href="/styles.css?v=ce978a33" />
         <link rel="stylesheet" href="/styles_basket.css?v=309ab63f" />
         
-<link rel="stylesheet" href="/styles_order_state.css?v=3d3c02ca" />
+<link rel="stylesheet" href="/styles_privacy.css?v=7d9279fa" />
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -73,56 +73,27 @@
         </header>
 
         
-<main class="success-page">
-
-  <!-- Loading state -->
-  <div id="success-loading" class="success-state">
-    <div class="spinner"></div>
-    <p>Confirming your order...</p>
-  </div>
-
-  <!-- Success state -->
-  <div id="success-content" class="success-state" style="display:none;">
-    <div class="success-hero">
-      <div class="success-emoji">🎉</div>
-      <span class="eyebrow">Order Confirmed</span>
-      <h2 class="headline">Thank you so much!</h2>
-      <p class="blurb">Your catnip goodies are on their way. You'll receive a confirmation email shortly. 🐱</p>
-    </div>
-
-    <div class="order-summary">
-      <h3 class="summary-title">What's on its way to you</h3>
-      <div id="order-items"></div>
-      <div class="order-summary-footer">
-        <a href="/shop.html" class="btn-shop">
-          <span>Continue Shopping</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-            <path d="M5 12h14M12 5l7 7-7 7"/>
-          </svg>
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <!-- Error state (no session_id / invalid) -->
-  <div id="success-error" class="success-state" style="display:none;">
-    <div class="success-hero">
-      <div class="success-emoji">😿</div>
-      <span class="eyebrow">Something went wrong</span>
-      <h2 class="headline">We lost track of your order</h2>
-      <p class="blurb">Don't worry — if you completed payment, your order went through. Check your email for a confirmation from Stripe.</p>
-    </div>
-    <div class="cta-container">
-      <a href="/shop.html" class="btn-shop">
-        <span>Back to Shop</span>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-          <path d="M5 12h14M12 5l7 7-7 7"/>
-        </svg>
-      </a>
-    </div>
-  </div>
-
-</main>
+    <main id="privacy-policy">
+        <h1>Privacy & Your Data</h1>
+        <p class="updated-date">Last Updated: March 2026</p>
+        <h2>Your Basket</h2>
+        <p>
+            Your shopping basket is stored locally in your browser. We won't see it
+            unless you place an order.
+        </p>
+        <h2>Payment & Personal Details</h2>
+        <p>
+            Payment is handled entirely by
+            <a href="https://stripe.com/gb/privacy" target="_blank">Stripe</a>. We don't
+            see or store your card details, name, or address - Stripe does. They're the
+            ones responsible for keeping it safe, and they're very good at it.
+        </p>
+        <h2>Data We Do Hold</h2>
+        <p>We only hold a reference to your Stripe checkout ID. This allows us to retrieve your name, address and phone number so we can process your order and supply tracking information.</p>
+        <p>We don't store your personal data. We only process it for the purposes of fulfilling orders and sending an email thanking you for your order.</p>
+        <h2>Marketing</h2>
+        <p>We don't use mailing lists. The only time you'll hear from us is regarding your order.</p>
+    </main>
 
 
         <footer>
@@ -133,8 +104,6 @@
         <script src="/js/basket.js?v=3a1557bf"></script>
 
         
-<script src="/js/order_success.js?v=ce23d017"></script>
-
 
         </body>
     </html>
