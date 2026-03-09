@@ -5,7 +5,7 @@ data:
   og_image: assets/og_logo.png
   og_image_alt: Yarn & Moggy logo
   og_url: https://yarnandmoggy.co.uk
-  icon: favicon.ico
+  icon: assets/favicon.ico
   apple_touch_icon: assets/icon.png
 
   header_nav:
