@@ -141,85 +141,6 @@ function showBasketMessage(text, type = "success") {
   }, 3000);
 }
 
-// ─── FLYING ANIMATION ─────────────────────────────────────────────────────────
-
-function triggerBasketAnimation(sourceElement) {
-  const badge = document.getElementById("basket-badge");
-  if (!badge || !sourceElement) return;
-
-  const sourceRect = sourceElement.getBoundingClientRect();
-  const badgeRect = badge.getBoundingClientRect();
-
-  let imgSrc = "";
-  const imgEl =
-    sourceElement.tagName === "IMG"
-      ? sourceElement
-      : sourceElement.querySelector("img");
-
-  if (imgEl?.src) {
-    imgSrc = imgEl.src;
-  } else {
-    const bg = window.getComputedStyle(sourceElement).backgroundImage;
-    if (bg && bg !== "none") {
-      imgSrc = bg.replace(/url\(['"]?(.*?)['"]?\)/i, "$1");
-    }
-  }
-
-  const ghost = document.createElement("div");
-  Object.assign(ghost.style, {
-    position: "fixed",
-    top: `${sourceRect.top}px`,
-    left: `${sourceRect.left}px`,
-    width: `${sourceRect.width}px`,
-    height: `${sourceRect.height}px`,
-    maxWidth: "10%",
-    maxHeight: "10%",
-    margin: "0",
-    padding: "0",
-    zIndex: "10000",
-    pointerEvents: "none",
-    transition: "all 0.8s cubic-bezier(0.45, 0.05, 0.55, 0.95)",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    borderRadius: window.getComputedStyle(sourceElement).borderRadius || "12px",
-    boxShadow: "0 5px 15px rgba(0,0,0,0.2)",
-    opacity: "1",
-    backgroundImage: imgSrc ? `url(${imgSrc})` : "",
-    backgroundColor: imgSrc ? "" : "var(--pastel-pink, #ef9fa9)",
-  });
-
-  document.body.appendChild(ghost);
-
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      Object.assign(ghost.style, {
-        top: `${badgeRect.top + badgeRect.height / 2}px`,
-        left: `${badgeRect.left + badgeRect.width / 2}px`,
-        width: "20px",
-        height: "20px",
-        opacity: "0.2",
-        transform: "translate(-50%, -50%) rotate(720deg) scale(0.1)",
-      });
-    });
-  });
-
-  setTimeout(() => {
-    ghost.remove();
-    updateBasketBadge();
-
-    const badge = document.getElementById("basket-badge");
-    if (badge) {
-      const originalColor = badge.style.backgroundColor;
-      badge.style.backgroundColor = "var(--accent-pink, #e55381)";
-      badge.style.transform = "scale(1.4)";
-      setTimeout(() => {
-        badge.style.backgroundColor = originalColor;
-        badge.style.transform = "";
-      }, 300);
-    }
-  }, 850);
-}
-
 // ─── CORE BASKET OPERATIONS ───────────────────────────────────────────────────
 
 /**
@@ -282,11 +203,7 @@ function addToBasket(
 
   saveBasket(basket);
 
-  // Fly animation from product card if present
-  const productCard = document.querySelector(`[data-slug="${product.slug}"]`);
-  if (productCard) {
-    triggerBasketAnimation(productCard);
-  }
+  updateBasketBadge();
 
   showBasketMessage(
     variantName
