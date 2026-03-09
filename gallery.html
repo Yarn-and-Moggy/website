@@ -9,6 +9,8 @@
         <link rel="stylesheet" href="/styles.css?v=ef985582" />
         <link rel="stylesheet" href="/styles_basket.css?v=309ab63f" />
         
+<link rel="stylesheet" href="styles_gallery.css?v=0" />
+
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -80,9 +82,27 @@
         </header>
 
         
-    <main id="gallery">
-        <h1>Coming Soon!</h1>
-    </main>
+<main class="gallery-page">
+  <div class="gallery-header">
+    <h2 class="gallery-title">The Clowder</h2>
+    <p class="gallery-subtitle">cats being cats 🐾</p>
+  </div>
+
+  <div id="gallery-grid" class="gallery-grid">
+    <!-- Populated by JS -->
+  </div>
+
+  <div id="gallery-loading" class="gallery-loading">
+    <div class="spinner"></div>
+  </div>
+
+  <div id="gallery-end" class="gallery-end" style="display:none;">
+    <span>you've seen them all 🐱</span>
+  </div>
+
+  <!-- Load more sentinel for infinite scroll -->
+  <div id="gallery-sentinel"></div>
+</main>
 
 
         <footer>
@@ -94,6 +114,8 @@
         <script src="/js/base.js?v=e125125d"></script>
 
         
+<script src="/js/gallery.jinja.js?v=0"></script>
+
 
         </body>
     </html>
