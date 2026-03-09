@@ -17,7 +17,7 @@
               rel="stylesheet" />
         <meta property="og:title" content="{{ data.og_title }}" />
         <meta property="og:description" content="{{ data.og_description }}" />
-        <meta property="og:image" content="{{ data.og_image }}" />
+        <meta property="og:image" content="{{ data.asset_bucket_url }}{{ data.og_image }}" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta property="og:image:alt" content="{{ data.og_image_alt }}" />
@@ -26,12 +26,12 @@
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="{{ data.og_title }}" />
         <meta name="twitter:description" content="{{ data.og_description }}" />
-        <meta name="twitter:image" content="{{ data.og_image }}" />
+        <meta name="twitter:image" content="{{ data.asset_bucket_url }}{{ data.og_image }}" />
         <meta name="twitter:image:alt" content="{{ data.og_image_alt }}" />
-        <link rel="icon" type="image/x-icon" href="{{ data.icon }}" />
+        <link rel="icon" type="image/x-icon" href="{{ data.asset_bucket_url }}{{ data.icon }}" />
         <link rel="apple-touch-icon"
               sizes="180x180"
-              href="{{ data.apple_touch_icon }}" />
+              href="{{ data.asset_bucket_url }}{{ data.apple_touch_icon }}" />
     </head>
     <body>
         <header>

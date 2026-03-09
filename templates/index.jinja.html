@@ -24,7 +24,7 @@
         {% for item in data.gallery %}
             <article class="gallery-item">
                 <div class="img-container">
-                    <img src="{{ item.src }}" alt="{{ item.alt }}" />
+                  <img src="{{ data.asset_bucket_url }}{{ item.src }}" alt="{{ item.alt }}" />
                 </div>
                 <p class="caption">{{ item.caption }}</p>
             </article>

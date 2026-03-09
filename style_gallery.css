@@ -1,0 +1,138 @@
+.gallery-page {
+  padding: 2rem var(--spacing-md) var(--spacing-lg);
+}
+
+.gallery-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.gallery-title {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 3rem;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.25rem;
+}
+
+.gallery-subtitle {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.gallery-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.polaroid {
+  background: white;
+  padding: 0.75rem 0.75rem 2.5rem;
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.08),
+    0 8px 24px rgba(0, 0, 0, 0.06),
+    0 1px 2px rgba(0, 0, 0, 0.04);
+  transform: rotate(var(--tilt, 2deg));
+  transition:
+    transform 0.3s cubic-bezier(0.2, 1.4, 0.2, 1),
+    box-shadow 0.3s ease;
+  cursor: default;
+  width: 200px;
+  animation: floatIn 0.5s ease both;
+  position: relative;
+}
+
+.polaroid:hover {
+  transform: rotate(var(--tilt, 2deg)) scale(1.06);
+  box-shadow:
+    0 12px 24px rgba(0, 0, 0, 0.12),
+    0 24px 48px rgba(0, 0, 0, 0.08);
+  z-index: 10;
+}
+
+@keyframes floatIn {
+  from {
+    opacity: 0;
+    transform: rotate(var(--tilt, 2deg)) translateY(16px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(var(--tilt, 2deg)) translateY(0) scale(1);
+  }
+}
+
+.polaroid-img-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: #f0ede8;
+}
+
+.polaroid-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: saturate(0.85) contrast(1.05);
+  transition: filter 0.3s ease;
+}
+
+.polaroid:hover .polaroid-img {
+  filter: saturate(1) contrast(1.05);
+}
+
+.polaroid-emoji {
+  position: absolute;
+  bottom: -12px;
+  right: 8px;
+  font-size: 1.8rem;
+  line-height: 1;
+  transform: rotate(12deg);
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.15));
+  pointer-events: none;
+  z-index: 2;
+}
+
+.polaroid-caption {
+  font-size: 0.78rem;
+  text-align: center;
+  color: #555;
+  margin-top: 1.1rem;
+  font-family: "Hanken Grotesk", sans-serif;
+  font-weight: 500;
+  line-height: 1.4;
+  padding: 0 0.25rem;
+}
+
+.gallery-loading {
+  display: flex;
+  justify-content: center;
+  padding: 3rem 0;
+}
+
+.gallery-end {
+  display: flex;
+  justify-content: center;
+  padding: 3rem 0 1rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+@media (max-width: 480px) {
+  .polaroid {
+    width: 155px;
+  }
+
+  .gallery-grid {
+    gap: 1rem;
+  }
+}

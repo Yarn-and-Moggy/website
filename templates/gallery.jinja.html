@@ -1,6 +1,33 @@
 {% extends 'base.jinja.html' %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ versioned('styles_gallery.css') }}" />
+{% endblock %}
+
 {% block content %}
-    <main id="gallery">
-        <h1>Coming Soon!</h1>
-    </main>
+<main class="gallery-page">
+  <div class="gallery-header">
+    <h2 class="gallery-title">The Clowder</h2>
+    <p class="gallery-subtitle">cats being cats 🐾</p>
+  </div>
+
+  <div id="gallery-grid" class="gallery-grid">
+    <!-- Populated by JS -->
+  </div>
+
+  <div id="gallery-loading" class="gallery-loading">
+    <div class="spinner"></div>
+  </div>
+
+  <div id="gallery-end" class="gallery-end" style="display:none;">
+    <span>you've seen them all 🐱</span>
+  </div>
+
+  <!-- Load more sentinel for infinite scroll -->
+  <div id="gallery-sentinel"></div>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ versioned('/js/gallery.jinja.js') }}"></script>
 {% endblock %}
