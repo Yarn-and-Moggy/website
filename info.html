@@ -9,7 +9,7 @@
         <link rel="stylesheet" href="/styles.css?v=2f059cb7" />
         <link rel="stylesheet" href="/styles_basket.css?v=309ab63f" />
         
-<link rel="stylesheet" href="/styles_info.css?v=0f1aefb3" />
+<link rel="stylesheet" href="/styles_info.css?v=c2398841" />
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -101,6 +101,10 @@
   <h2>Something else?</h2>
   <p>Reach us on Instagram <a href="https://www.instagram.com/yarnandmoggy" target="_blank">@yarnandmoggy</a> — we're friendly, promise 🐱</p>
 
+  <span class="reveal-email" data-user="olleh" data-domain="ku.oc.yggomdnanray">
+    <button onclick="revealEmail(this.parentElement)">Show email</button>
+  </span>
+
 </main>
 
 
@@ -109,10 +113,19 @@
             <a class="privacy-link" href="/privacy.html">Privacy Policy</a>
         </footer>
 
-        <script src="/js/basket.js?v=3a1557bf"></script>
+        <script src="/js/basket.js?v=7b7cf7a7"></script>
         <script src="/js/base.js?v=e125125d"></script>
 
         
+<script>
+function revealEmail(el) {
+  const user = el.dataset.user.split('').reverse().join('');
+  const domain = el.dataset.domain.split('').reverse().join('');
+  const email = `${user}@${domain}`;
+  el.innerHTML = `<a href="mailto:${email}">${email}</a>`;
+}
+</script>
+
 
         </body>
     </html>

@@ -24,5 +24,20 @@
   <h2>Something else?</h2>
   <p>Reach us on Instagram <a href="{{ data.header_nav[0].href }}" target="_blank">@yarnandmoggy</a> — we're friendly, promise 🐱</p>
 
+  <span class="reveal-email" data-user="olleh" data-domain="ku.oc.yggomdnanray">
+    <button onclick="revealEmail(this.parentElement)">Show email</button>
+  </span>
+
 </main>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function revealEmail(el) {
+  const user = el.dataset.user.split('').reverse().join('');
+  const domain = el.dataset.domain.split('').reverse().join('');
+  const email = `${user}@${domain}`;
+  el.innerHTML = `<a href="mailto:${email}">${email}</a>`;
+}
+</script>
 {% endblock %}

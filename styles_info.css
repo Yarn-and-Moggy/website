@@ -44,3 +44,30 @@
 #information-panel a:hover {
   opacity: 0.7;
 }
+
+.reveal-email button {
+  background: none;
+  border: 1.5px solid currentColor;
+  border-radius: 999px;
+  padding: 0.3rem 1rem;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 700;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+  font-family: inherit;
+}
+
+.reveal-email button:hover {
+  opacity: 1;
+}
+
+.reveal-email a {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

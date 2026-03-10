@@ -225,6 +225,7 @@ document.getElementById("checkout-btn").addEventListener("click", async () => {
       // Redirect to stripe url from response if valid
       const { valid, stripe_url } = await response.json();
       if (valid === true) {
+        btn.querySelector("span").textContent = "Redirecting to Stripe...";
         localStorage.setItem("basket_cleared", "false");
         window.location.href = stripe_url;
       }
@@ -237,10 +238,9 @@ document.getElementById("checkout-btn").addEventListener("click", async () => {
 
   } catch (err) {
     showBasketMessage("🙀 Something went wrong, please try again", "error");
-  } finally {
     btn.disabled = false;
     btn.querySelector("span").textContent = "Proceed to Checkout";
-  }
+  } 
 });
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
