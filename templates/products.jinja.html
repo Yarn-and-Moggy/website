@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block content %}
+<main>
 <div class="product-page-container" id="product-root">
 <div id="product-loading" class="text-center" style="padding: 100px 0;">
 <p class="headline">🐈️ Loading Product...</p>
@@ -54,6 +55,7 @@
 <p class="blurb">{{ data.info.safety }}</p>
 </div>
 
+</main>
 {% endblock %}
 {% block extra_js %}
 <script src="{{ versioned('/js/product_detail.js') }}" defer></script>
