@@ -49,6 +49,11 @@
 
 </div>
 
+<div id="product-blurb">
+<p class="blurb">{{ data.info.cost }}</p>
+<p class="blurb">{{ data.info.safety }}</p>
+</div>
+
 {% endblock %}
 {% block extra_js %}
 <script src="{{ versioned('/js/product_detail.js') }}" defer></script>

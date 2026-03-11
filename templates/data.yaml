@@ -1,7 +1,7 @@
 data:
   page_title: Yarn & Moggy | Catnip Infused Crochet Toys
   og_title: Yarn & Moggy
-  og_description: Handcraft Amigurumi Crochet. Coming Soon
+  og_description: Handcrafted Amigurumi Crochet | Catnip Infused Crochet Toys
   og_image: assets/og_logo.png
   og_image_alt: Yarn & Moggy logo
   og_url: https://yarnandmoggy.co.uk
@@ -25,7 +25,7 @@ data:
   hero_text:
     eyebrow: Premium Catnip Infused
     headline: Toys that make them purr.
-    blurb: Handcraft Amigurumi Crochet. Coming Soon.
+    blurb: Handcrafted Crochet for Cats.
 
   gallery:
     - src: assets/img1.jpeg
@@ -41,10 +41,14 @@ data:
   shop:
     headline: The Collection
     blurb: Limited runs of handmade catnip joy, all made with 100% cotton yarn.
-    aside: All items are handmade and pieces have natural variation.
+    aside: All items are handmade and pieces will have natural variation.
 
   footer: Handmade with Catnip & Love • Nottingham, UK
   api_url: https://staging-api.yarnandmoggy.co.uk
   bucket_url: ""
   # ENSURE TRAILING /
   asset_bucket_url: "https://productstack-productimagesbucket03bda4c8-8xhzzlriquyw.s3.amazonaws.com/"
+
+  info:
+    cost: Every item in our shop is crocheted by hand — a machine that can crochet does not exist. A single toy can take several hours to make. The price reflects the time, skill, and love that goes into each one.
+    safety: All our toys are made with cat safety in mind. We use pet-safe materials throughout. As with any toy, we recommend supervised play and checking regularly for wear and tear.

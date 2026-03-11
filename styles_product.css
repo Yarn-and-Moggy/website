@@ -135,6 +135,13 @@
   color: #d32f2f;
 }
 
+#product-blurb {
+  max-width: 1200px;
+  margin: auto;
+  padding: 0 2rem 1rem 2rem;
+  text-align: center;
+}
+
 @keyframes shudder {
   0%,
   100% {
