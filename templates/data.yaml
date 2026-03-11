@@ -44,10 +44,10 @@ data:
     aside: All items are handmade and pieces will have natural variation.
 
   footer: Handmade with Catnip & Love • Nottingham, UK
-  api_url: https://staging-api.yarnandmoggy.co.uk
+  api_url: https://api.yarnandmoggy.co.uk
   bucket_url: ""
   # ENSURE TRAILING /
-  asset_bucket_url: "https://productstack-productimagesbucket03bda4c8-8xhzzlriquyw.s3.amazonaws.com/"
+  asset_bucket_url: "https://prodproductstack-productimagesbucket03bda4c8-e89ijiiozgn4.s3.amazonaws.com/"
 
   info:
     cost: Every item in our shop is crocheted by hand — a machine that can crochet does not exist. A single toy can take several hours to make. The price reflects the time, skill, and love that goes into each one.
