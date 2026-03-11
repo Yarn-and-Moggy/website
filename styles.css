@@ -452,13 +452,6 @@ footer p {
     gap: 1rem;
   }
 
-  #header-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    padding: 1rem;
-  }
-
   .nav-left,
   .nav-right {
     text-align: center;
