@@ -36,7 +36,7 @@ async function initProductPage() {
   } catch (err) {
     document.getElementById("product-loading").innerHTML = `
       <p class="headline">Product Not Found</p>
-      <a href="/shop.html" class="btn-primary">Back to Shop</a>
+      <a href="/shop.html" class="btn-shop">Back to Shop</a>
     `;
   }
 }
