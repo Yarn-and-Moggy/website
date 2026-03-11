@@ -234,6 +234,9 @@ async function initShop() {
   await fetchProducts(grid);
   if (loading) loading.style.display = "none";
 
+  const shopHeader = document.getElementById("shop-header");
+  if (shopHeader) shopHeader.classList.add("visible");
+
   const observer = new IntersectionObserver(
     async (entries) => {
       if (entries[0].isIntersecting && grid.dataset.nextCursor) {

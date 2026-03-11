@@ -130,6 +130,10 @@
   transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
+.basket-dropdown-close {
+  display: none;
+}
+
 .basket-dropdown.active {
   opacity: 1;
   visibility: visible;
@@ -192,25 +196,25 @@
 }
 
 .remove-mini {
-    background: none;
-    border: none;
-    padding: 4px;
-    cursor: pointer;
-    color: #ccc;
-    font-size: 14px;
-    line-height: 1;
-    transition: all 0.2s;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #ccc;
+  font-size: 14px;
+  line-height: 1;
+  transition: all 0.2s;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
 }
 
 .remove-mini:hover {
-    background-color: #fee2e2;
-    color: #ef4444;
+  background-color: #fee2e2;
+  color: #ef4444;
 }
 
 .dropdown-footer {
@@ -241,4 +245,58 @@
   padding: 2rem 0;
   color: var(--text-muted);
   font-style: italic;
+}
+
+@media (hover: none) {
+  .basket-link:hover {
+    color: var(--text-main);
+  }
+
+  .remove-mini:hover {
+    background-color: transparent;
+    color: #ccc;
+  }
+
+  .btn-checkout-mini:hover {
+    background: var(--text-main);
+  }
+}
+
+@media (max-width: 768px) {
+  .basket-dropdown {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    border-radius: 1.5rem 1.5rem 0 0;
+    transform-origin: bottom center;
+    transform: translateY(20px) scale(0.98);
+    margin-top: 0;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  .basket-dropdown-close {
+    display: flex;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s;
+  }
+
+  .basket-dropdown.active {
+    transform: translateY(0) scale(1);
+  }
 }

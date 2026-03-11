@@ -294,6 +294,7 @@ document.addEventListener("DOMContentLoaded", () => {
     toggle.parentElement.insertAdjacentHTML(
       "beforeend",
       `<div id="basket-dropdown" class="basket-dropdown">
+        <button id="basket-dropdown-close" class="basket-dropdown-close">✕</button>
         <div class="dropdown-header">Your Basket</div>
         <div id="basket-items-list" class="basket-items-list"></div>
         <div class="dropdown-footer">
@@ -301,6 +302,14 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
       </div>`,
     );
+  }
+
+  // Wire up close button
+  const closeBtn = document.getElementById("basket-dropdown-close");
+  if (closeBtn) {
+    closeBtn.addEventListener("click", () => {
+      dropdown.classList.remove("active");
+    });
   }
 
   // On basket page do not drop down the basket

@@ -34,25 +34,25 @@
               href="{{ data.asset_bucket_url }}{{ data.apple_touch_icon }}" />
     </head>
     <body>
+        <nav id="header-nav">
+            <div class="nav-left">
+                <p class="clowder-text">Join the Clowder!</p>
+            </div>
+            <div class="nav-center">
+                {% for item in data.header_nav %}
+                    <a href="{{ item.href }}" class="{{ item.class }}" target="_blank">{{ item.text }}</a>
+                {% endfor %}
+            </div>
+            <div class="nav-right">
+                <a href="/basket.html" class="basket-link" id="basket-toggle">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4H6zM3 6h18M16 10a4 4 0 01-8 0"/>
+                    </svg>
+                    <span id="basket-badge" class="basket-badge" style="display: none;">0</span>
+                </a>
+            </div>
+        </nav>
         <header>
-            <nav id="header-nav">
-                <div class="nav-left">
-                    <p class="clowder-text">Join the Clowder!</p>
-                </div>
-                <div class="nav-center">
-                    {% for item in data.header_nav %}
-                        <a href="{{ item.href }}" class="{{ item.class }}" target="_blank">{{ item.text }}</a>
-                    {% endfor %}
-                </div>
-                <div class="nav-right">
-                    <a href="/basket.html" class="basket-link" id="basket-toggle">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4H6zM3 6h18M16 10a4 4 0 01-8 0"/>
-                        </svg>
-                        <span id="basket-badge" class="basket-badge" style="display: none;">0</span>
-                    </a>
-                </div>
-            </nav>
             <div class="logo-container">
               <a href="/"><img src="{{ data.logo.src }}"
                      alt="{{ data.logo.alt }}"

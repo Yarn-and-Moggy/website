@@ -137,3 +137,12 @@
   font-weight: 700;
 }
 
+@media (max-width: 768px) {
+  .success-page {
+    padding: 1.5rem var(--spacing-md) var(--spacing-lg);
+  }
+
+  .success-emoji {
+    font-size: 3rem;
+  }
+}

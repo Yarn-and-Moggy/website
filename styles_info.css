@@ -71,3 +71,23 @@
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+
+@media (hover: none) {
+  #information-panel a:hover {
+    opacity: 1;
+  }
+
+  .reveal-email button:hover {
+    opacity: 0.6;
+  }
+}
+
+@media (max-width: 768px) {
+  #information-panel {
+    padding: 1.5rem var(--spacing-md) var(--spacing-lg);
+  }
+
+  #information-panel h1 {
+    font-size: 2rem;
+  }
+}

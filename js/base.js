@@ -23,3 +23,10 @@ function highlightActiveNav() {
     link.classList.toggle("active", isActive);
   });
 }
+
+// Add box shadow to header nav on scroll
+window.addEventListener("scroll", () => {
+  const nav = document.getElementById("header-nav");
+  if (!nav) return;
+  nav.classList.toggle("scrolled", window.scrollY > 10);
+});
