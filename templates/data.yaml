@@ -61,3 +61,5 @@ data:
       answer: "{{ data.info.safety }}"
     - question: Can I request a custom order?
       answer: "Sometimes! Drop us a message on Instagram and we'll let you know what's possible."
+    - question: Where do you deliver to and how much will it cost?
+      answer: We ship to anywhere within the UK. We ship with Royal Mail tracked 48 and charge £4 delivery, which covers our costs for additional packaging.
