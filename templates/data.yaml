@@ -52,3 +52,12 @@ data:
   info:
     cost: Every item in our shop is crocheted by hand — a machine that can crochet does not exist. A single toy can take several hours to make. The price reflects the time, skill, and love that goes into each one.
     safety: All our toys are made with cat safety in mind. We use pet-safe materials throughout. As with any toy, we recommend supervised play and checking regularly for wear and tear.
+  faq:
+    - question: How long will my order take?
+      answer: Some items are made to order by hand, so please allow up to 7 days for dispatch. Once dispatched, we ship via Royal Mail Tracked 48 — typically 2-3 business days. You'll receive an email when your order is on its way.
+    - question: Why does crochet cost more?
+      answer: "{{ data.info.cost }}"
+    - question: Are the toys safe for my cat?
+      answer: "{{ data.info.safety }}"
+    - question: Can I request a custom order?
+      answer: "Sometimes! Drop us a message on Instagram and we'll let you know what's possible."

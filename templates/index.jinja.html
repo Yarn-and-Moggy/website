@@ -32,3 +32,34 @@
     </section>
 </main>
 {% endblock %}
+
+{% block schema_org %}
+<script type="application/ld+json">
+[
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Yarn & Moggy",
+    "url": "{{ data.og_url }}",
+    "logo": "{{ data.asset_bucket_url }}{{ data.og_image }}",
+    "description": "{{ data.og_description }}",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Nottingham",
+      "addressCountry": "GB"
+    },
+    "sameAs": [
+      {% for link in data.header_nav %}
+      "{{ link.href }}"{% if not loop.last %},{% endif %}
+      {% endfor %}
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Yarn & Moggy",
+    "url": "{{ data.og_url }}"
+  }
+]
+</script>
+{% endblock %}

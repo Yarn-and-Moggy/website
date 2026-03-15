@@ -19,6 +19,14 @@ def build():
     with open("templates/data.yaml") as f:
         raw = yaml.safe_load(f)
 
+    # Expand the info - maybe modularise this out at some point but for now it's two exceptions, who cares
+    data = raw['data']
+    for entry in data.get("faq", []):
+        if entry["answer"] == "{{ data.info.cost }}":
+            entry["answer"] = data["info"]["cost"]
+        elif entry["answer"] == "{{ data.info.safety }}":
+            entry["answer"] = data["info"]["safety"]
+
     env = Environment(loader=FileSystemLoader("templates"))
     env.globals["file_hash"] = file_hash
 

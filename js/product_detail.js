@@ -32,13 +32,46 @@ async function initProductPage() {
   try {
     const response = await fetch(`${API_URL}/products/${productId}`);
     if (!response.ok) throw new Error("Product not found");
-    renderProduct(await response.json());
+    const product = await response.json();
+    renderProduct(product);
+    injectProductSchema(product);
   } catch (err) {
     document.getElementById("product-loading").innerHTML = `
       <p class="headline">Product Not Found</p>
       <a href="/shop.html" class="btn-shop">Back to Shop</a>
     `;
   }
+}
+
+function injectProductSchema(product) {
+  // Add schema.org tags to head
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    sku: product.slug,
+    description: product.description,
+    image: product.image_urls,
+    url: `https://yarnandmoggy.co.uk/product.html?product-id=${product.slug}`,
+    brand: {
+      "@type": "Brand",
+      name: "Yarn & Moggy",
+    },
+    offers: {
+      "@type": "Offer",
+      price: (product.price_pence / 100).toFixed(2),
+      priceCurrency: "GBP",
+      availability: product.in_stock
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+      url: `https://yarnandmoggy.co.uk/product.html?product-id=${product.slug}`,
+    },
+  };
+
+  const script = document.createElement("script");
+  script.type = "application/ld+json";
+  script.textContent = JSON.stringify(schema);
+  document.head.appendChild(script);
 }
 
 function renderProduct(product) {
