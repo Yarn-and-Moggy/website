@@ -47,7 +47,7 @@ data:
   api_url: https://api.yarnandmoggy.co.uk
   bucket_url: ""
   # ENSURE TRAILING /
-  asset_bucket_url: "https://prodproductstack-productimagesbucket03bda4c8-e89ijiiozgn4.s3.amazonaws.com/"
+  asset_bucket_url: "https://assets.yarnandmoggy.co.uk/"
 
   info:
     cost: Every item in our shop is crocheted by hand — a machine that can crochet does not exist. A single toy can take several hours to make. The price reflects the time, skill, and love that goes into each one.
