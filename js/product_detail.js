@@ -124,9 +124,7 @@ function renderProduct(product) {
       btn.disabled = available <= 0;
 
       const colour = v.name.split(" ")[0].toLowerCase();
-      btn.innerHTML = isColour(colour)
-        ? `<span class="colour-dot" style="background-color: ${COLOURMAP[colour] || colour};"></span><span>${v.name}</span>`
-        : `<span>${v.name}</span>`;
+      btn.innerHTML = `<span class="colour-dot" style="background-color: ${COLOURMAP[colour] || colour};"></span><span>${v.name}</span>`
 
       if (!firstSelected && available > 0) {
         btn.classList.add("selected");
