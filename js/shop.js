@@ -8,6 +8,12 @@
 
 const API_URL = "https://api.yarnandmoggy.co.uk";
 
+// Map colour names to hexcodes
+const COLOURMAP = {
+  pistachio: "#2dbb90",
+  strawberry: "#fc95b0",
+}
+
 // ─── STATE ────────────────────────────────────────────────────────────────────
 
 let allProducts = [];
@@ -47,7 +53,7 @@ function createProductCard(product) {
         return `
           <button class="variant-dot ${isVarOutOfStock ? "disabled" : ""}"
                   title="${v.name}${isVarOutOfStock ? " (No more available)" : ""}"
-                  style="background-color: ${colour};"
+                  style="background-color: ${COLOURMAP[colour] || colour};"
                   ${isVarOutOfStock ? "disabled" : ""}
                   onclick="event.preventDefault(); selectVariantAndAdd('${product.slug}', '${v.name}')">
           </button>

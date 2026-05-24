@@ -6,6 +6,12 @@
 
 const API_URL = "{{ data.api_url }}";
 
+// Map colour names to hexcodes
+const COLOURMAP = {
+  pistachio: "#2dbb90",
+  strawberry: "#fc95b0",
+}
+
 let selectedVariantName = null;
 
 function getBasketQty(productSlug, variantName = null) {
@@ -119,7 +125,7 @@ function renderProduct(product) {
 
       const colour = v.name.split(" ")[0].toLowerCase();
       btn.innerHTML = isColour(colour)
-        ? `<span class="colour-dot" style="background-color:${v.name.toLowerCase()}"></span><span>${v.name}</span>`
+        ? `<span class="colour-dot" style="background-color: ${COLOURMAP[colour] || colour};"></span><span>${v.name}</span>`
         : `<span>${v.name}</span>`;
 
       if (!firstSelected && available > 0) {
