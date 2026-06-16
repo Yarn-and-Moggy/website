@@ -44,7 +44,7 @@ data:
     aside: All items are handmade and pieces will have natural variation.
 
   footer: Handmade with Catnip & Love • Nottingham, UK
-  api_url: https://api.yarnandmoggy.co.uk
+  api_url: https://staging-api.yarnandmoggy.co.uk
   bucket_url: ""
   # ENSURE TRAILING /
   asset_bucket_url: "https://assets.yarnandmoggy.co.uk/"
