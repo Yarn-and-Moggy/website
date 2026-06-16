@@ -48,7 +48,7 @@ data:
     - We are working towards using all our waste yarn to create recycled stuffing, though some regular polyester toy stuffing may still be used during this transitional period
 
   footer: Handmade with Catnip & Love • Nottingham, UK
-  api_url: https://staging-api.yarnandmoggy.co.uk
+  api_url: https://api.yarnandmoggy.co.uk
   bucket_url: ""
   # ENSURE TRAILING /
   asset_bucket_url: "https://assets.yarnandmoggy.co.uk/"
