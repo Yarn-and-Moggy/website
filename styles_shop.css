@@ -96,6 +96,15 @@
   transition: color 0.3s ease;
 }
 
+.shop-item-info h4 {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 0.85rem;
+  margin: 0 0 0.25rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
 .shop-item:hover .shop-item-info h3 {
   color: var(--accent-pink);
 }

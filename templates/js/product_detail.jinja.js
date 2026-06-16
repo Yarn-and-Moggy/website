@@ -10,7 +10,7 @@ const API_URL = "{{ data.api_url }}";
 const COLOURMAP = {
   pistachio: "#2dbb90",
   strawberry: "#fc95b0",
-}
+};
 
 let selectedVariantName = null;
 
@@ -86,8 +86,37 @@ function renderProduct(product) {
   document.getElementById("product-name").textContent = product.name;
   document.getElementById("product-price").textContent =
     "£" + (product.price_pence / 100).toFixed(2);
-  document.getElementById("product-description").innerHTML =
-    product.description;
+
+  // Description - use extended_description if available, fall back to legacy description
+  const extDesc = product.extended_description;
+  const hasExtended =
+    extDesc &&
+    (extDesc.simple_description || extDesc.tagline || extDesc.product_info);
+
+  if (hasExtended) {
+    let descHtml = "";
+    if (extDesc.tagline) {
+      descHtml += `<p class="product-tagline">${extDesc.tagline}</p>`;
+    }
+    if (extDesc.simple_description) {
+      descHtml += `<p class="product-simple-description">${extDesc.simple_description}</p>`;
+    }
+    if (extDesc.product_info) {
+      const info = extDesc.product_info;
+      descHtml += `<dl class="product-info-list">`;
+      if (info.dimensions) {
+        descHtml += `<dt>Dimensions</dt><dd>${info.dimensions}</dd>`;
+      }
+      if (info.additional_features) {
+        descHtml += `<dt>Features</dt><dd>${info.additional_features}</dd>`;
+      }
+      descHtml += `</dl>`;
+    }
+    document.getElementById("product-description").innerHTML = descHtml;
+  } else {
+    document.getElementById("product-description").innerHTML =
+      product.description;
+  }
 
   // Images
   const mainImg = document.getElementById("main-product-image");
@@ -124,7 +153,7 @@ function renderProduct(product) {
       btn.disabled = available <= 0;
 
       const colour = v.name.split(" ")[0].toLowerCase();
-      btn.innerHTML = `<span class="colour-dot" style="background-color: ${COLOURMAP[colour] || colour};"></span><span>${v.name}</span>`
+      btn.innerHTML = `<span class="colour-dot" style="background-color: ${COLOURMAP[colour] || colour};"></span><span>${v.name}</span>`;
 
       if (!firstSelected && available > 0) {
         btn.classList.add("selected");

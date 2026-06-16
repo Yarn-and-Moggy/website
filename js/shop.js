@@ -36,6 +36,7 @@ function createProductCard(product) {
   const price = (product.price_pence / 100).toFixed(2);
   const productUrl = `/products.html?product-id=${product.slug}`;
   const hasVariants = product.variants && product.variants.length > 0;
+  const tagline = product.tagline || null;
 
   let totalAvailable = 0;
   let variantHtml = "";
@@ -99,6 +100,7 @@ function createProductCard(product) {
         </div>
         <div class="shop-item-info">
           <h3>${product.name}</h3>
+          ${tagline ? `<h4>${tagline}</h4>` : ""}
           <p class="price">&pound;${price}</p>
         </div>
       </a>
