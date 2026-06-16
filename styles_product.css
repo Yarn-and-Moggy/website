@@ -93,6 +93,13 @@
   align-self: baseline;
 }
 
+#yarn-and-moggy-copy {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
 .btn-primary {
   display: block;
   width: 100%;

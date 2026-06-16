@@ -30,6 +30,11 @@
         <p id="product-price" class="price-large"></p>
         
         <div id="product-description" class="description"></div>
+        <div id="yarn-and-moggy-copy">
+          {% for line in data.product_copy %}
+          <p>{{ line }}</p>
+          {% endfor %}
+        </div>
 
         <div id="variant-section" class="options-section" style="display: none;">
             <label>Select Option</label>
