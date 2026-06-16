@@ -4,7 +4,7 @@
  * Infinite scroll via IntersectionObserver.
  */
 
-const API_URL = "https://api.yarnandmoggy.co.uk";
+const API_URL = "https://staging-api.yarnandmoggy.co.uk";
 
 const EMOJIS = [
   "🐾",
