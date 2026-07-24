@@ -10,6 +10,9 @@ data:
 
   header_nav:
     - class: social_link
+      href: https://www.tiktok.com/@yarnandmoggy
+      text: TikTok
+    - class: social_link
       href: https://www.instagram.com/yarnandmoggy
       text: Instagram
     - class: social_link
