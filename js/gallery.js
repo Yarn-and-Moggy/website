@@ -2,6 +2,7 @@
  * gallery.jinja.js
  * Fetches gallery items from API and renders polaroid cards.
  * Infinite scroll via IntersectionObserver.
+ * Depends on: lightbox.jinja.js (must be loaded first)
  */
 
 const API_URL = "https://api.yarnandmoggy.co.uk";
@@ -88,7 +89,7 @@ function renderItems(items) {
       <div class="polaroid-img-wrap">
         <img src="${item.url}" alt="${item.caption}" loading="lazy" class="polaroid-img" />
       </div>
-      <span class="polaroid-emoji" style="${cornerStyle}">${emoji}</span>
+      <span class="polaroid-emoji sticker" style="${cornerStyle}">${emoji}</span>
       <p class="polaroid-caption">${item.caption}</p>
     `;
 
@@ -117,42 +118,4 @@ function setupInfiniteScroll() {
   );
 
   observer.observe(sentinel);
-}
-
-function setupLightbox() {
-  const lightbox = document.createElement("div");
-  lightbox.id = "lightbox";
-  lightbox.innerHTML = `
-    <div class="lightbox-backdrop"></div>
-    <div class="lightbox-content">
-      <img id="lightbox-img" src="" alt="" />
-      <p id="lightbox-caption"></p>
-      <button class="lightbox-close">&#x2715;</button>
-    </div>
-  `;
-  document.body.appendChild(lightbox);
-
-  lightbox
-    .querySelector(".lightbox-backdrop")
-    .addEventListener("click", closeLightbox);
-  lightbox
-    .querySelector(".lightbox-close")
-    .addEventListener("click", closeLightbox);
-  document.addEventListener(
-    "keydown",
-    (e) => e.key === "Escape" && closeLightbox(),
-  );
-}
-
-function openLightbox(url, caption) {
-  const lightbox = document.getElementById("lightbox");
-  document.getElementById("lightbox-img").src = url;
-  document.getElementById("lightbox-caption").textContent = caption;
-  lightbox.classList.add("active");
-  document.body.style.overflow = "hidden";
-}
-
-function closeLightbox() {
-  document.getElementById("lightbox").classList.remove("active");
-  document.body.style.overflow = "";
 }

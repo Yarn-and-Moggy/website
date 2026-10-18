@@ -1,1 +1,2 @@
 {% macro versioned(path) %}{{ path }}?v={{ file_hash(path) }}{% endmacro %}
+{% macro loading_text(text) %}<span class="loading-cat" aria-hidden="true"><span class="loading-cat-inner">🐈️</span></span> {{ text }}<span class="loading-dots" aria-hidden="true"><span>.</span><span>.</span><span>.</span></span>{% endmacro %}

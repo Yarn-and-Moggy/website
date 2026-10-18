@@ -106,10 +106,7 @@
 .polaroid-emoji {
   position: absolute;
   font-size: 2.2rem;
-  line-height: 1;
   transform: rotate(12deg);
-  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.15));
-  pointer-events: none;
   z-index: 2;
 }
 
@@ -141,102 +138,6 @@
   color: var(--text-muted);
 }
 
-#lightbox {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  align-items: center;
-  justify-content: center;
-  display: flex;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease;
-}
-
-#lightbox.active {
-  opacity: 1;
-  pointer-events: all;
-}
-
-.lightbox-backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(4px);
-  animation: fadeIn 0.2s ease;
-}
-
-.lightbox-content {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem;
-  animation: popIn 0.3s cubic-bezier(0.2, 1.4, 0.2, 1);
-  max-width: 90vw;
-  max-height: 90vh;
-}
-
-#lightbox-img {
-  max-width: 100%;
-  max-height: 75vh;
-  object-fit: contain;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
-  border-radius: 20px;
-}
-
-#lightbox-caption {
-  color: white;
-  font-size: 0.9rem;
-  text-align: center;
-  font-family: "Hanken Grotesk", sans-serif;
-  opacity: 0.85;
-}
-
-.lightbox-close {
-  position: absolute;
-  top: -1rem;
-  right: -1rem;
-  background: white;
-  border: none;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  transition: transform 0.2s ease;
-}
-
-.lightbox-close:hover {
-  transform: scale(1.1);
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes popIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
 @media (max-width: 480px) {
   .polaroid {
     width: 155px;
@@ -259,19 +160,10 @@
   .polaroid:hover .polaroid-img {
     filter: saturate(0.85) contrast(1.05) sepia(0.15);
   }
-
-  .lightbox-close:hover {
-    transform: none;
-  }
 }
 
 @media (max-width: 768px) {
   .gallery-title {
     font-size: 2rem;
-  }
-
-  .lightbox-close {
-    top: 0.5rem;
-    right: 0.5rem;
   }
 }

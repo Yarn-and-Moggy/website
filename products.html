@@ -6,10 +6,11 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Yarn & Moggy | Catnip Infused Crochet Toys</title>
-        <link rel="stylesheet" href="/styles.css?v=362a1840" />
+        <link rel="stylesheet" href="/styles.css?v=7f479cf5" />
         <link rel="stylesheet" href="/styles_basket.css?v=a7ea2680" />
         
-<link rel="stylesheet" href="/styles_product.css?v=3f04d683" />
+<link rel="stylesheet" href="/styles_product.css?v=243cdebc" />
+<link rel="stylesheet" href="/styles_lightbox.css?v=efabbe7d" />
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -50,6 +51,8 @@
                 
                     <a href="https://www.facebook.com/profile.php?id=61588603917369" class="social_link" target="_blank">Facebook</a>
                 
+                    <a href="https://www.tiktok.com/@yarnandmoggy" class="social_link" target="_blank">TikTok</a>
+                
             </div>
             <div class="nav-right">
                 <a href="/basket.html" class="basket-link" id="basket-toggle">
@@ -89,13 +92,17 @@
 <main>
 <div class="product-page-container" id="product-root">
 <div id="product-loading" class="text-center" style="padding: 100px 0;">
-<p class="headline">🐈️ Loading Product...</p>
+<p class="headline"><span class="loading-cat" aria-hidden="true"><span class="loading-cat-inner">🐈️</span></span> Loading Product<span class="loading-dots" aria-hidden="true"><span>.</span><span>.</span><span>.</span></span></p>
 </div>
 
 <div id="product-content" class="product-layout" style="display: none;">
     <div class="product-gallery">
         <div class="main-image-container">
-            <img id="main-product-image" src="" alt="">
+            <div class="gallery-track" id="gallery-track" tabindex="0" aria-label="Product images"></div>
+            <button class="gallery-arrow prev" id="gallery-prev" aria-label="Previous image">&#x2039;</button>
+            <button class="gallery-arrow next" id="gallery-next" aria-label="Next image">&#x203A;</button>
+            <div class="gallery-counter" id="gallery-counter"></div>
+            <div class="gallery-dots" id="gallery-dots"></div>
         </div>
         <div class="thumbnail-strip" id="thumbnail-strip">
             <!-- Thumbs injected by JS -->
@@ -154,7 +161,8 @@
         <script src="/js/base.js?v=23eca09f"></script>
 
         
-<script src="/js/product_detail.js?v=e4dcb642" defer></script>
+<script src="/js/lightbox.js?v=9d79b18f" defer></script>
+<script src="/js/product_detail.js?v=50f49dac" defer></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
