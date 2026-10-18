@@ -18,9 +18,6 @@ data:
     - class: social_link
       href: https://www.facebook.com/profile.php?id=61588603917369
       text: Facebook
-    - class: social_link
-      href: https://www.tiktok.com/@yarnandmoggy
-      text: TikTok
 
   logo:
     src: assets/logo.svg
