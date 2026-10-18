@@ -378,21 +378,6 @@ footer p {
   text-decoration: underline;
 }
 
-.spinner {
-  width: 32px;
-  height: 32px;
-  border: 3px solid var(--border-light);
-  border-top-color: var(--accent-pink);
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 @media (hover: none) {
   .gallery-item:hover .img-container {
     transform: none;
@@ -465,5 +450,101 @@ footer p {
   .basket-toast {
     font-size: 1rem;
     padding: 10px 15px;
+  }
+}
+
+/* Loading state: strutting cat + animated ellipsis */
+.loading-cat {
+  display: inline-block;
+  width: 3em;
+  text-align: left;
+  vertical-align: bottom;
+}
+
+.loading-cat-inner {
+  display: inline-block;
+  transform-origin: 50% 100%;
+  animation:
+    cat-walk 3.2s ease-in-out infinite,
+    cat-strut 0.4s cubic-bezier(0.3, 0, 0.3, 1) infinite alternate;
+}
+
+/* Patrols left/right, turning to face the way it's going */
+@keyframes cat-walk {
+  0% {
+    translate: 0 0;
+    scale: -1 1;
+  }
+  46% {
+    translate: 2em 0;
+    scale: -1 1;
+  }
+  50% {
+    translate: 2em 0;
+    scale: 1 1;
+  }
+  96% {
+    translate: 0 0;
+    scale: 1 1;
+  }
+  100% {
+    translate: 0 0;
+    scale: -1 1;
+  }
+}
+
+/* Hop + hip-swing on every step */
+@keyframes cat-strut {
+  0% {
+    transform: translateY(0) rotate(-10deg) scaleY(0.92);
+  }
+  60% {
+    transform: translateY(-0.35em) rotate(4deg) scaleY(1.05);
+  }
+  100% {
+    transform: translateY(-0.1em) rotate(12deg) scaleY(1);
+  }
+}
+
+.loading-dots span {
+  animation: loading-dot 1.2s steps(1, end) infinite;
+}
+
+.loading-dots span:nth-child(2) {
+  animation-name: loading-dot-2;
+}
+
+.loading-dots span:nth-child(3) {
+  animation-name: loading-dot-3;
+}
+
+/* . → .. → ... */
+@keyframes loading-dot {
+  0% {
+    visibility: visible;
+  }
+}
+
+@keyframes loading-dot-2 {
+  0% {
+    visibility: hidden;
+  }
+  33% {
+    visibility: visible;
+  }
+}
+
+@keyframes loading-dot-3 {
+  0% {
+    visibility: hidden;
+  }
+  66% {
+    visibility: visible;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-cat-inner {
+    animation: none;
   }
 }

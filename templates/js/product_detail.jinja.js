@@ -119,24 +119,7 @@ function renderProduct(product) {
   }
 
   // Images
-  const mainImg = document.getElementById("main-product-image");
-  const thumbStrip = document.getElementById("thumbnail-strip");
-  const images = product.image_urls.map(transformImageUrl);
-
-  mainImg.src = images[0];
-  images.forEach((url, i) => {
-    const thumb = document.createElement("img");
-    thumb.src = url;
-    thumb.className = i === 0 ? "active" : "";
-    thumb.onclick = () => {
-      mainImg.src = url;
-      Array.from(thumbStrip.children).forEach((t) =>
-        t.classList.remove("active"),
-      );
-      thumb.classList.add("active");
-    };
-    thumbStrip.appendChild(thumb);
-  });
+  initGallery(product.image_urls.map(transformImageUrl), product.name);
 
   // Variants
   if (product.variants && product.variants.length > 0) {
@@ -212,6 +195,99 @@ function renderProduct(product) {
       detail.variantName ?? null,
     );
   });
+}
+
+function initGallery(images, altText) {
+  const track = document.getElementById("gallery-track");
+  const thumbStrip = document.getElementById("thumbnail-strip");
+  const dots = document.getElementById("gallery-dots");
+  const counter = document.getElementById("gallery-counter");
+  const prevBtn = document.getElementById("gallery-prev");
+  const nextBtn = document.getElementById("gallery-next");
+  let current = 0;
+
+  setupLightbox();
+
+  images.forEach((url, i) => {
+    const slide = document.createElement("img");
+    slide.className = "gallery-slide";
+    slide.src = url;
+    slide.alt = `${altText} – image ${i + 1}`;
+    if (i > 0) slide.loading = "lazy";
+    slide.onclick = () =>
+      openLightboxSet(images, i, { caption: altText, onChange: goTo });
+    track.appendChild(slide);
+
+    const thumb = document.createElement("button");
+    thumb.className = "thumb";
+    thumb.setAttribute("aria-label", `Show image ${i + 1}`);
+    thumb.innerHTML = `<img src="${url}" alt="" loading="lazy">`;
+    thumb.onclick = () => goTo(i);
+    thumbStrip.appendChild(thumb);
+
+    const dot = document.createElement("button");
+    dot.className = "gallery-dot";
+    dot.setAttribute("aria-label", `Show image ${i + 1}`);
+    dot.onclick = () => goTo(i);
+    dots.appendChild(dot);
+  });
+
+  if (images.length < 2) {
+    [prevBtn, nextBtn, counter, dots, thumbStrip].forEach(
+      (el) => (el.style.display = "none"),
+    );
+    return;
+  }
+
+  function goTo(i) {
+    i = Math.max(0, Math.min(images.length - 1, i));
+    track.scrollTo({ left: i * track.clientWidth });
+    updateUI(i);
+  }
+
+  function updateUI(i) {
+    if (i === current && counter.textContent) return;
+    current = i;
+    Array.from(thumbStrip.children).forEach((t, j) =>
+      t.classList.toggle("active", j === i),
+    );
+    Array.from(dots.children).forEach((d, j) =>
+      d.classList.toggle("active", j === i),
+    );
+    counter.textContent = `${i + 1} / ${images.length}`;
+    prevBtn.disabled = i === 0;
+    nextBtn.disabled = i === images.length - 1;
+    const activeThumb = thumbStrip.children[i];
+    thumbStrip.scrollTo({
+      left:
+        activeThumb.offsetLeft -
+        thumbStrip.offsetLeft -
+        (thumbStrip.clientWidth - activeThumb.offsetWidth) / 2,
+    });
+  }
+
+  prevBtn.onclick = () => goTo(current - 1);
+  nextBtn.onclick = () => goTo(current + 1);
+
+  // Swiping (native scroll-snap) drives the active index
+  let ticking = false;
+  track.addEventListener("scroll", () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      updateUI(Math.round(track.scrollLeft / track.clientWidth));
+      ticking = false;
+    });
+  });
+
+  track.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowLeft") goTo(current - 1);
+    else if (e.key === "ArrowRight") goTo(current + 1);
+    else return;
+    e.preventDefault();
+  });
+
+  updateUI(0);
 }
 
 function handleAdd(product) {

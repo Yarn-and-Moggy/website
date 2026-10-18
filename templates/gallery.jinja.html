@@ -2,6 +2,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ versioned('styles_gallery.css') }}" />
+<link rel="stylesheet" href="{{ versioned('/styles_lightbox.css') }}" />
 {% endblock %}
 
 {% block content %}
@@ -17,7 +18,7 @@
   </div>
 
   <div id="gallery-loading" class="gallery-loading">
-    <div class="spinner"></div>
+    <p class="headline">{{ loading_text("Fetching more cats") }}</p>
   </div>
 
   <div id="gallery-end" class="gallery-end" style="display:none;">
@@ -30,5 +31,6 @@
 {% endblock %}
 
 {% block extra_js %}
+<script src="{{ versioned('/js/lightbox.js') }}"></script>
 <script src="{{ versioned('/js/gallery.js') }}"></script>
 {% endblock %}

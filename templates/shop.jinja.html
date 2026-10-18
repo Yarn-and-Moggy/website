@@ -5,7 +5,7 @@
 {% block content %}
 <main class="shop-container">
     <div id="shop-loading" class="text-center" style="padding: 100px 0;">
-      <p class="headline">🐈️ Loading Products...</p>
+      <p class="headline">{{ loading_text("Loading Products") }}</p>
     </div>
     <div id="shop-header">
       <h1 class="headline">{{ data.shop.headline }}</h1>

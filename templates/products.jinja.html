@@ -2,19 +2,24 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ versioned('/styles_product.css') }}" />
+<link rel="stylesheet" href="{{ versioned('/styles_lightbox.css') }}" />
 {% endblock %}
 
 {% block content %}
 <main>
 <div class="product-page-container" id="product-root">
 <div id="product-loading" class="text-center" style="padding: 100px 0;">
-<p class="headline">🐈️ Loading Product...</p>
+<p class="headline">{{ loading_text("Loading Product") }}</p>
 </div>
 
 <div id="product-content" class="product-layout" style="display: none;">
     <div class="product-gallery">
         <div class="main-image-container">
-            <img id="main-product-image" src="" alt="">
+            <div class="gallery-track" id="gallery-track" tabindex="0" aria-label="Product images"></div>
+            <button class="gallery-arrow prev" id="gallery-prev" aria-label="Previous image">&#x2039;</button>
+            <button class="gallery-arrow next" id="gallery-next" aria-label="Next image">&#x203A;</button>
+            <div class="gallery-counter" id="gallery-counter"></div>
+            <div class="gallery-dots" id="gallery-dots"></div>
         </div>
         <div class="thumbnail-strip" id="thumbnail-strip">
             <!-- Thumbs injected by JS -->
@@ -62,6 +67,7 @@
 </main>
 {% endblock %}
 {% block extra_js %}
+<script src="{{ versioned('/js/lightbox.js') }}" defer></script>
 <script src="{{ versioned('/js/product_detail.js') }}" defer></script>
 
 <script>
