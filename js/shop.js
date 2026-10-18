@@ -14,11 +14,27 @@ const COLOURMAP = {
   strawberry: "#fc95b0",
 }
 
+// Products without a category are treated as this by the API
+const DEFAULT_CATEGORY = "cat-toys";
+
 // ─── STATE ────────────────────────────────────────────────────────────────────
 
 let allProducts = [];
 
+// Only set when there's more than one category, otherwise products are unfiltered
+let activeCategory = null;
+
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
+
+/**
+ * cat-toys -> Cat Toys
+ */
+function titleCase(slug) {
+  return slug
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
 
 /**
  * How many of a given product/variant are already in the basket?
@@ -212,13 +228,19 @@ function toggleVariantPicker(slug, show) {
 // ─── DATA FETCHING + INFINITE SCROLL ─────────────────────────────────────────
 
 async function fetchProducts(grid, cursor = "") {
-  const url = cursor
-    ? `${API_URL}/products?cursor=${cursor}`
-    : `${API_URL}/products`;
+  const params = new URLSearchParams();
+  if (activeCategory) params.set("category", activeCategory);
+  if (cursor) params.set("cursor", cursor);
+  const query = params.toString();
+  const url = query ? `${API_URL}/products?${query}` : `${API_URL}/products`;
+
+  // Category may change while this request is in flight
+  const requestedCategory = activeCategory;
 
   try {
     const response = await fetch(url);
     const data = await response.json();
+    if (requestedCategory !== activeCategory) return;
 
     allProducts = [...allProducts, ...data.products];
     grid.insertAdjacentHTML(
@@ -226,11 +248,78 @@ async function fetchProducts(grid, cursor = "") {
       data.products.map(createProductCard).join("")
     );
     grid.dataset.nextCursor = data.next_cursor || "";
-    return data.next_cursor;
   } catch (err) {
     console.error("Failed to load products", err);
-    return null;
+    if (requestedCategory === activeCategory) grid.dataset.nextCursor = "";
   }
+}
+
+async function fetchCategories() {
+  try {
+    const response = await fetch(`${API_URL}/categories`);
+    const data = await response.json();
+    return data.categories || [];
+  } catch (err) {
+    console.error("Failed to load categories", err);
+    return [];
+  }
+}
+
+/**
+ * Pick the starting category: ?category= if valid, else the default, else the first
+ */
+function getInitialCategory(categories) {
+  const slugs = categories.map((c) => c.category);
+  const requested = new URLSearchParams(location.search).get("category");
+  if (requested && slugs.includes(requested)) return requested;
+  if (slugs.includes(DEFAULT_CATEGORY)) return DEFAULT_CATEGORY;
+  return slugs[0];
+}
+
+/**
+ * Only shown when there's more than one category
+ */
+function renderCategoryPills(categories) {
+  const container = document.getElementById("category-pills");
+  if (!container || categories.length < 2) return;
+
+  activeCategory = getInitialCategory(categories);
+  container.innerHTML = categories
+    .map(({ category }) => {
+      const isActive = category === activeCategory;
+      return `
+        <button class="category-pill ${isActive ? "active" : ""}"
+                data-category="${category}"
+                aria-pressed="${isActive}">
+          ${titleCase(category)}
+        </button>
+      `;
+    })
+    .join("");
+  container.hidden = false;
+}
+
+async function selectCategory(category, grid, sentinel, observer) {
+  if (category === activeCategory) return;
+  activeCategory = category;
+
+  document.querySelectorAll(".category-pill").forEach((pill) => {
+    const isActive = pill.dataset.category === category;
+    pill.classList.toggle("active", isActive);
+    pill.setAttribute("aria-pressed", isActive);
+  });
+
+  const url = new URL(location.href);
+  url.searchParams.set("category", category);
+  history.replaceState(null, "", url);
+
+  grid.innerHTML = "";
+  grid.dataset.nextCursor = "";
+  allProducts = [];
+
+  await fetchProducts(grid);
+  // The previous category may have run out of pages and stopped observing
+  if (category === activeCategory) observer.observe(sentinel);
 }
 
 async function initShop() {
@@ -239,6 +328,7 @@ async function initShop() {
   const loading = document.getElementById("shop-loading");
   if (!grid || !sentinel) return;
 
+  renderCategoryPills(await fetchCategories());
   await fetchProducts(grid);
   if (loading) loading.style.display = "none";
 
@@ -248,14 +338,19 @@ async function initShop() {
   const observer = new IntersectionObserver(
     async (entries) => {
       if (entries[0].isIntersecting && grid.dataset.nextCursor) {
-        const next = await fetchProducts(grid, grid.dataset.nextCursor);
-        if (!next) observer.unobserve(sentinel);
+        await fetchProducts(grid, grid.dataset.nextCursor);
+        if (!grid.dataset.nextCursor) observer.unobserve(sentinel);
       }
     },
     { rootMargin: "200px" }
   );
 
   observer.observe(sentinel);
+
+  document.getElementById("category-pills")?.addEventListener("click", (e) => {
+    const pill = e.target.closest(".category-pill");
+    if (pill) selectCategory(pill.dataset.category, grid, sentinel, observer);
+  });
 }
 
 // listen for basket changes
