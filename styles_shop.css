@@ -3,6 +3,31 @@
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 3rem 2rem;
   padding: 2rem 0;
+  /* Rows stay their natural size while min-height holds the grid open */
+  align-content: start;
+  /* Keep in sync with GRID_FADE_MS in shop.jinja.js */
+  transition: opacity 0.25s ease;
+}
+
+/* Fades the old products out while a new category loads */
+.product-grid.is-switching {
+  opacity: 0;
+}
+
+/* Eases the grid down to a shorter category's height (GRID_RESIZE_MS) */
+.product-grid.is-resizing {
+  transition:
+    opacity 0.25s ease,
+    min-height 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* Entrance Animation */
@@ -19,15 +44,14 @@
 
 #shop-header {
   display: none;
-  opacity: 0;
-  transition: opacity 0.6s ease;
   flex-direction: column;
   align-items: center;
 }
 
+/* Animation rather than transition, which can't run from display: none */
 #shop-header.visible {
   display: flex;
-  opacity: 1;
+  animation: fadeIn 0.6s ease;
 }
 
 /* Category Pills */
@@ -44,13 +68,14 @@
 }
 
 .category-pill {
+  position: relative;
   background: none;
   color: var(--text-main);
   border: 1.5px solid currentColor;
   border-radius: 999px;
   padding: 0.4rem 1.1rem;
   font-family: inherit;
-  font-size: 0.8rem;
+  font-size: 1rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.12em;
@@ -66,6 +91,57 @@
   background: var(--text-main);
   border-color: var(--text-main);
   color: var(--bg-white);
+  font-size: 1.2rem;
+}
+
+/* New category - blinks twice once the header is in, then gets a sticker */
+.category-pill:nth-of-type(2) {
+  animation: pillBlink 1.4s ease-in-out 0.8s;
+}
+
+.category-pill:nth-of-type(2)::after {
+  content: "New!";
+  position: absolute;
+  top: -1.2rem;
+  right: -1rem;
+  padding: 0.15rem 0.5rem;
+  background: var(--pastel-yellow);
+  color: var(--text-main);
+  border: 2px solid var(--bg-white);
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  transform: rotate(12deg);
+  pointer-events: none;
+  animation: stickerPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 1.6s backwards;
+}
+
+@keyframes pillBlink {
+  0%,
+  50%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(229, 83, 129, 0);
+  }
+  25%,
+  75% {
+    border-color: var(--accent-pink);
+    box-shadow:
+      0 0 0 4px rgba(229, 83, 129, 0.25),
+      0 0 18px rgba(229, 83, 129, 0.45);
+  }
+}
+
+@keyframes stickerPop {
+  from {
+    opacity: 0;
+    transform: scale(0) rotate(-30deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(12deg);
+  }
 }
 
 .aside {
@@ -80,18 +156,9 @@
   color: inherit;
 }
 
-/* Staggered animation */
-.shop-item:nth-of-type(1) {
-  animation-delay: 0.1s;
-}
-.shop-item:nth-of-type(2) {
-  animation-delay: 0.2s;
-}
-.shop-item:nth-of-type(3) {
-  animation-delay: 0.3s;
-}
-.shop-item:nth-of-type(4) {
-  animation-delay: 0.4s;
+/* Staggered animation - --stagger is set per card, restarting with each loaded page */
+.shop-item {
+  animation-delay: calc(0.1s + var(--stagger, 0) * 0.07s);
 }
 
 .shop-img-container {
@@ -109,7 +176,15 @@
   height: 100%;
   object-fit: cover;
   border-radius: var(--radius);
-  transition: transform 0.6s ease;
+  /* Hidden until loaded so lazy images fade in rather than pop */
+  opacity: 0;
+  transition:
+    opacity 0.5s ease,
+    transform 0.6s ease;
+}
+
+.shop-img-container img.loaded {
+  opacity: 1;
 }
 
 .shop-item:hover .shop-img-container {
@@ -345,5 +420,20 @@
 @media (max-width: 400px) {
   .product-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-grid,
+  .product-grid.is-resizing,
+  .shop-img-container img {
+    transition: none;
+  }
+
+  .shop-item,
+  #shop-header.visible,
+  .category-pill:nth-of-type(2),
+  .category-pill:nth-of-type(2)::after {
+    animation: none;
   }
 }

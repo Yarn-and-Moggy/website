@@ -17,6 +17,12 @@ const COLOURMAP = {
 // Products without a category are treated as this by the API
 const DEFAULT_CATEGORY = "cat-toys";
 
+// Keep in sync with .product-grid transitions in styles_shop.css
+const GRID_FADE_MS = 250;
+const GRID_RESIZE_MS = 500;
+// Cards past this index all share the last delay, so long pages don't crawl in
+const MAX_STAGGER = 8;
+
 // ─── STATE ────────────────────────────────────────────────────────────────────
 
 let allProducts = [];
@@ -36,6 +42,18 @@ function titleCase(slug) {
     .join(" ");
 }
 
+function prefersReducedMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function wait(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function nextFrame() {
+  return new Promise((resolve) => requestAnimationFrame(resolve));
+}
+
 /**
  * How many of a given product/variant are already in the basket?
  */
@@ -47,7 +65,7 @@ function getBasketQty(productSlug, variantName = null) {
 
 // ─── CARD RENDERING ───────────────────────────────────────────────────────────
 
-function createProductCard(product) {
+function createProductCard(product, index = 0) {
   const imgUrl = transformImageUrl(product.thumbnail_url);
   const price = (product.price_pence / 100).toFixed(2);
   const productUrl = `/products.html?product-id=${product.slug}`;
@@ -86,10 +104,12 @@ function createProductCard(product) {
   const isLastOne = totalAvailable === 1;
 
   return `
-    <article class="shop-item" data-slug="${product.slug}" id="card-${product.slug}">
+    <article class="shop-item" data-slug="${product.slug}" id="card-${product.slug}"
+             style="--stagger: ${Math.min(index, MAX_STAGGER)};">
       <a href="${productUrl}" class="shop-item-link" style="text-decoration: none; color: inherit; display: block;">
         <div class="shop-img-container ${isOutOfStock ? "out-of-stock" : ""}">
-          <img src="${imgUrl}" alt="${product.name}" loading="lazy">
+          <img src="${imgUrl}" alt="${product.name}" loading="lazy"
+               onload="this.classList.add('loaded')" onerror="this.classList.add('loaded')">
 
           ${hasVariants ? `
             <div class="variant-popover" id="popover-${product.slug}">
@@ -227,31 +247,76 @@ function toggleVariantPicker(slug, show) {
 
 // ─── DATA FETCHING + INFINITE SCROLL ─────────────────────────────────────────
 
-async function fetchProducts(grid, cursor = "") {
+/**
+ * Fetch one page of products for the active category. Returns null on failure
+ */
+async function requestProducts(cursor = "") {
   const params = new URLSearchParams();
   if (activeCategory) params.set("category", activeCategory);
   if (cursor) params.set("cursor", cursor);
   const query = params.toString();
   const url = query ? `${API_URL}/products?${query}` : `${API_URL}/products`;
 
-  // Category may change while this request is in flight
-  const requestedCategory = activeCategory;
-
   try {
     const response = await fetch(url);
-    const data = await response.json();
-    if (requestedCategory !== activeCategory) return;
-
-    allProducts = [...allProducts, ...data.products];
-    grid.insertAdjacentHTML(
-      "beforeend",
-      data.products.map(createProductCard).join("")
-    );
-    grid.dataset.nextCursor = data.next_cursor || "";
+    return await response.json();
   } catch (err) {
     console.error("Failed to load products", err);
-    if (requestedCategory === activeCategory) grid.dataset.nextCursor = "";
+    return null;
   }
+}
+
+function renderProducts(grid, data, replace = false) {
+  const products = data?.products ?? [];
+  if (replace) {
+    grid.innerHTML = "";
+    allProducts = [];
+  }
+  allProducts = [...allProducts, ...products];
+  grid.insertAdjacentHTML("beforeend", products.map(createProductCard).join(""));
+  grid.dataset.nextCursor = data?.next_cursor || "";
+}
+
+async function fetchProducts(grid, cursor = "") {
+  // Category may change while this request is in flight
+  const requestedCategory = activeCategory;
+  const data = await requestProducts(cursor);
+  if (requestedCategory === activeCategory) renderProducts(grid, data);
+}
+
+/**
+ * Smooth scroll so "The Collection" sits at the top, below the nav when it's sticky.
+ * Resolves once the scroll has finished.
+ */
+function scrollToCollection(maxScroll) {
+  const header = document.getElementById("shop-header");
+  if (!header) return Promise.resolve();
+
+  const nav = document.getElementById("header-nav");
+  const navOffset =
+    nav && getComputedStyle(nav).position === "sticky" ? nav.offsetHeight : 0;
+  const target = Math.max(
+    0,
+    Math.min(header.getBoundingClientRect().top + window.scrollY - navOffset - 16, maxScroll)
+  );
+  if (Math.abs(window.scrollY - target) < 2) return Promise.resolve();
+
+  if (prefersReducedMotion()) {
+    window.scrollTo({ top: target });
+    return Promise.resolve();
+  }
+
+  window.scrollTo({ top: target, behavior: "smooth" });
+  return new Promise((resolve) => {
+    const done = () => {
+      clearTimeout(fallback);
+      window.removeEventListener("scrollend", done);
+      resolve();
+    };
+    // Older Safari has no scrollend
+    const fallback = setTimeout(done, 1000);
+    window.addEventListener("scrollend", done);
+  });
 }
 
 async function fetchCategories() {
@@ -284,7 +349,12 @@ function renderCategoryPills(categories) {
   if (!container || categories.length < 2) return;
 
   activeCategory = getInitialCategory(categories);
-  container.innerHTML = categories
+  // Default first, so newer categories come after it (the 2nd pill gets the "New!" sticker)
+  const ordered = [
+    ...categories.filter((c) => c.category === DEFAULT_CATEGORY),
+    ...categories.filter((c) => c.category !== DEFAULT_CATEGORY),
+  ];
+  container.innerHTML = ordered
     .map(({ category }) => {
       const isActive = category === activeCategory;
       return `
@@ -313,13 +383,51 @@ async function selectCategory(category, grid, sentinel, observer) {
   url.searchParams.set("category", category);
   history.replaceState(null, "", url);
 
-  grid.innerHTML = "";
-  grid.dataset.nextCursor = "";
-  allProducts = [];
+  // Pause infinite scroll so the swap can't trigger a page load mid-transition
+  observer.unobserve(sentinel);
 
-  await fetchProducts(grid);
-  // The previous category may have run out of pages and stopped observing
-  if (category === activeCategory) observer.observe(sentinel);
+  // Hold the grid's height while it's swapped so the page doesn't jump
+  grid.classList.remove("is-resizing");
+  const heldHeight = grid.offsetHeight;
+  grid.style.minHeight = `${heldHeight}px`;
+  grid.classList.add("is-switching");
+
+  // Fade out and fetch at the same time, continue once both are done
+  const [data] = await Promise.all([
+    requestProducts(),
+    wait(prefersReducedMotion() ? 0 : GRID_FADE_MS),
+  ]);
+  if (category !== activeCategory) return;
+
+  renderProducts(grid, data, true);
+  grid.classList.remove("is-switching");
+  await nextFrame();
+
+  // Measure how tall the page will be once the height is released, so the
+  // scroll never overshoots and jumps back when the grid shrinks
+  grid.style.minHeight = "";
+  const newHeight = grid.offsetHeight;
+  grid.style.minHeight = `${heldHeight}px`;
+  const shrinkBy = Math.max(0, heldHeight - newHeight);
+  const maxScroll =
+    document.documentElement.scrollHeight - shrinkBy - window.innerHeight;
+
+  // Ease down to the new height rather than snapping, so content below
+  // doesn't jump up when switching to a category with fewer products
+  if (shrinkBy > 0) {
+    grid.classList.add("is-resizing");
+    grid.style.minHeight = `${newHeight}px`;
+  }
+
+  await Promise.all([
+    scrollToCollection(maxScroll),
+    wait(shrinkBy > 0 && !prefersReducedMotion() ? GRID_RESIZE_MS : 0),
+  ]);
+  if (category !== activeCategory) return;
+
+  grid.classList.remove("is-resizing");
+  grid.style.minHeight = "";
+  observer.observe(sentinel);
 }
 
 async function initShop() {
