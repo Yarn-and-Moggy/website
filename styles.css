@@ -316,19 +316,41 @@ main {
   transform: scale(1.08);
 }
 
-.img-container::after {
-  content: "😻";
-  position: absolute;
-  top: 1.5rem;
-  right: 1.5rem;
-  font-size: 1.2rem;
-  color: var(--pastel-blue);
-  opacity: 0;
-  transition: opacity 0.3s ease;
+/* Shared die-cut sticker look: stacked white shadows trace the emoji's outline, then a soft lift */
+.sticker {
+  line-height: 1;
+  filter: drop-shadow(0.06em 0 0 #fff) drop-shadow(-0.06em 0 0 #fff)
+    drop-shadow(0 0.06em 0 #fff) drop-shadow(0 -0.06em 0 #fff)
+    drop-shadow(0 0.08em 0.1em rgba(0, 0, 0, 0.2));
+  pointer-events: none;
+  user-select: none;
 }
 
-.gallery-item:hover .img-container::after {
-  opacity: 1;
+.gallery-item {
+  position: relative;
+}
+
+.gallery-sticker {
+  position: absolute;
+  top: -0.9rem;
+  right: -0.9rem;
+  z-index: 2;
+  font-size: 2.2rem;
+  transform: rotate(var(--tilt, 12deg));
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.gallery-item:nth-child(2) .gallery-sticker {
+  --tilt: -10deg;
+}
+
+.gallery-item:nth-child(3) .gallery-sticker {
+  --tilt: 6deg;
+}
+
+/* Rides up with the image on hover */
+.gallery-item:hover .gallery-sticker {
+  transform: translateY(-8px) rotate(var(--tilt, 12deg)) scale(1.12);
 }
 
 .gallery-item:hover .img-container {

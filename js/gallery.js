@@ -89,7 +89,7 @@ function renderItems(items) {
       <div class="polaroid-img-wrap">
         <img src="${item.url}" alt="${item.caption}" loading="lazy" class="polaroid-img" />
       </div>
-      <span class="polaroid-emoji" style="${cornerStyle}">${emoji}</span>
+      <span class="polaroid-emoji sticker" style="${cornerStyle}">${emoji}</span>
       <p class="polaroid-caption">${item.caption}</p>
     `;
 

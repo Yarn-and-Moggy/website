@@ -106,10 +106,7 @@
 .polaroid-emoji {
   position: absolute;
   font-size: 2.2rem;
-  line-height: 1;
   transform: rotate(12deg);
-  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.15));
-  pointer-events: none;
   z-index: 2;
 }
 
