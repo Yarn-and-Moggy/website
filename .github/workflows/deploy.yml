@@ -1,0 +1,72 @@
+name: Build & deploy
+
+# Git always holds the PROD values in CNAME / templates/data.yaml.
+# Pushes to `staging` swap in the staging values before building.
+
+on:
+  push:
+    branches: [main, staging]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Apply staging config
+        if: github.ref_name == 'staging'
+        run: |
+          sed -i \
+            -e 's#https://api\.yarnandmoggy\.co\.uk#https://staging-api.yarnandmoggy.co.uk#' \
+            -e 's#https://assets\.yarnandmoggy\.co\.uk/#https://staging-assets.yarnandmoggy.co.uk/#' \
+            -e 's#og_url: https://yarnandmoggy\.co\.uk#og_url: https://staging.yarnandmoggy.co.uk#' \
+            templates/data.yaml
+          echo "staging.yarnandmoggy.co.uk" > CNAME
+
+          # Fail loudly rather than ship prod URLs to staging
+          grep -q 'api_url: https://staging-api.yarnandmoggy.co.uk' templates/data.yaml
+          grep -q 'asset_bucket_url: "https://staging-assets.yarnandmoggy.co.uk/"' templates/data.yaml
+          grep -q 'og_url: https://staging.yarnandmoggy.co.uk' templates/data.yaml
+
+      - name: Build templates
+        run: python build_from_templates.py
+
+      - name: Assemble site
+        run: |
+          rsync -a ./ _site/ \
+            --exclude '.*' \
+            --exclude '_site' \
+            --exclude 'templates' \
+            --exclude 'build_from_templates.py' \
+            --exclude 'requirements.txt'
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
