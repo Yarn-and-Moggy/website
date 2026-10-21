@@ -6,11 +6,29 @@
 
 const API_URL = "{{ data.api_url }}";
 
-// Map colour names to hexcodes
+// Products without a category are treated as this by the API
+const DEFAULT_CATEGORY = "cat-toys";
+
+// Map colour names to hexcodes (or gradients for multi-colour yarns)
 const COLOURMAP = {
   pistachio: "#2dbb90",
   strawberry: "#fc95b0",
+  peach: "#ffcba4",
+  moss: "#8a9a5b",
+  mauve: "#b784a7",
+  aubergine: "#614051",
+  "red & white": "linear-gradient(135deg, #d62828 50%, #ffffff 50%)",
+  "red & green": "linear-gradient(135deg, #d62828 50%, #2d8a3e 50%)",
 };
+
+// Longest key the variant name starts with, so "Red & Green (4)" matches "red & green" not "red"
+function variantColour(name) {
+  const lower = name.toLowerCase();
+  const key = Object.keys(COLOURMAP)
+    .filter((k) => lower.startsWith(k))
+    .sort((a, b) => b.length - a.length)[0];
+  return key ? COLOURMAP[key] : lower.split(" ")[0];
+}
 
 let selectedVariantName = null;
 
@@ -39,6 +57,12 @@ async function initProductPage() {
     const response = await fetch(`${API_URL}/products/${productId}`);
     if (!response.ok) throw new Error("Product not found");
     const product = await response.json();
+    // The API always includes the shared packaging shot, which should be last
+    const isPackaging = (url) => url.endsWith("/packaging.jpeg");
+    product.image_urls = [
+      ...product.image_urls.filter((url) => !isPackaging(url)),
+      ...product.image_urls.filter(isPackaging),
+    ];
     renderProduct(product);
     injectProductSchema(product);
   } catch (err) {
@@ -118,6 +142,11 @@ function renderProduct(product) {
       product.description;
   }
 
+  // Cotton/catnip copy only applies to cat toys
+  if ((product.category || DEFAULT_CATEGORY) !== DEFAULT_CATEGORY) {
+    document.getElementById("yarn-and-moggy-copy").style.display = "none";
+  }
+
   // Images
   initGallery(product.image_urls.map(transformImageUrl), product.name);
 
@@ -134,9 +163,7 @@ function renderProduct(product) {
 
       const available = v.quantity - getBasketQty(product.slug, v.name);
       btn.disabled = available <= 0;
-
-      const colour = v.name.split(" ")[0].toLowerCase();
-      btn.innerHTML = `<span class="colour-dot" style="background-color: ${COLOURMAP[colour] || colour};"></span><span>${v.name}</span>`;
+      btn.innerHTML = `<span class="colour-dot" style="background: ${variantColour(v.name)};"></span><span>${v.name}</span>`;
 
       if (!firstSelected && available > 0) {
         btn.classList.add("selected");

@@ -8,10 +8,25 @@
 
 const API_URL = "{{ data.api_url }}";
 
-// Map colour names to hexcodes
+// Map colour names to hexcodes (or gradients for multi-colour yarns)
 const COLOURMAP = {
   pistachio: "#2dbb90",
   strawberry: "#fc95b0",
+  peach: "#ffcba4",
+  moss: "#8a9a5b",
+  mauve: "#b784a7",
+  aubergine: "#614051",
+  "red & white": "linear-gradient(135deg, #d62828 50%, #ffffff 50%)",
+  "red & green": "linear-gradient(135deg, #d62828 50%, #2d8a3e 50%)",
+}
+
+// Longest key the variant name starts with, so "Red & Green (4)" matches "red & green" not "red"
+function variantColour(name) {
+  const lower = name.toLowerCase();
+  const key = Object.keys(COLOURMAP)
+    .filter((k) => lower.startsWith(k))
+    .sort((a, b) => b.length - a.length)[0];
+  return key ? COLOURMAP[key] : lower.split(" ")[0];
 }
 
 // Products without a category are treated as this by the API
@@ -83,12 +98,11 @@ function createProductCard(product, index = 0) {
         totalAvailable += available;
 
         const isVarOutOfStock = available <= 0;
-        const colour = v.name.split(" ")[0].toLowerCase();
 
         return `
           <button class="variant-dot ${isVarOutOfStock ? "disabled" : ""}"
                   title="${v.name}${isVarOutOfStock ? " (No more available)" : ""}"
-                  style="background-color: ${COLOURMAP[colour] || colour};"
+                  style="background: ${variantColour(v.name)};"
                   ${isVarOutOfStock ? "disabled" : ""}
                   onclick="event.preventDefault(); selectVariantAndAdd('${product.slug}', '${v.name}')">
           </button>
