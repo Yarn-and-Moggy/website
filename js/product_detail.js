@@ -31,6 +31,7 @@ function variantColour(name) {
 }
 
 let selectedVariantName = null;
+let currentProduct = null;
 
 function getBasketQty(productSlug, variantName = null) {
   const basket = typeof getBasket === "function" ? getBasket() : {};
@@ -105,6 +106,7 @@ function injectProductSchema(product) {
 }
 
 function renderProduct(product) {
+  currentProduct = product;
   document.getElementById("product-content").dataset.slug = product.slug;
   document.getElementById("breadcrumb-name").textContent = product.name;
   document.getElementById("product-name").textContent = product.name;
@@ -151,7 +153,24 @@ function renderProduct(product) {
   initGallery(product.image_urls.map(transformImageUrl), product.name);
 
   // Variants
-  if (product.variants && product.variants.length > 0) {
+  if (isPackProduct(product)) {
+    // Pack sizes: each has its own price, all share the product's stock
+    document.getElementById("variant-section").style.display = "block";
+    document.querySelector("#variant-section label").textContent = "Pack Size";
+    const picker = document.getElementById("variant-picker");
+    product.variants.forEach((v) => {
+      const btn = document.createElement("button");
+      btn.className = "variant-opt pack-opt";
+      btn.dataset.variant = v.name;
+      btn.innerHTML = `<span>${v.name}</span><span class="pack-price">£${(v.price_pence / 100).toFixed(2)}</span>`;
+      btn.onclick = () => selectPack(product, v.name);
+      picker.appendChild(btn);
+    });
+    // Start on the first pack that still fits in the remaining stock
+    const left = packUnitsLeft(product);
+    const first = product.variants.find((v) => v.count <= left) || product.variants[0];
+    selectPack(product, first.name);
+  } else if (product.variants && product.variants.length > 0) {
     document.getElementById("variant-section").style.display = "block";
     const picker = document.getElementById("variant-picker");
     let firstSelected = false;
@@ -317,6 +336,19 @@ function initGallery(images, altText) {
   updateUI(0);
 }
 
+function selectPack(product, variantName) {
+  const picker = document.getElementById("variant-picker");
+  Array.from(picker.children).forEach((b) =>
+    b.classList.toggle("selected", b.dataset.variant === variantName),
+  );
+  selectedVariantName = variantName;
+  const pack = findVariant(product, variantName);
+  document.getElementById("product-price").textContent =
+    "£" + (pack.price_pence / 100).toFixed(2);
+  document.getElementById("add-to-cart-btn").classList.remove("needs-selection");
+  updateStockDisplay(product.quantity, product.slug, variantName);
+}
+
 function handleAdd(product) {
   if (product.variants?.length > 0 && !selectedVariantName) {
     const addBtn = document.getElementById("add-to-cart-btn");
@@ -328,7 +360,9 @@ function handleAdd(product) {
       firstVariant.classList.add("picker-highlight");
       setTimeout(() => firstVariant.classList.remove("picker-highlight"), 1000);
     }
-    showBasketMessage("Please pick a colour first! 🐾");
+    showBasketMessage(
+      isPackProduct(product) ? "Please pick a pack size first! 🐾" : "Please pick a colour first! 🐾",
+    );
     return;
   }
 
@@ -346,6 +380,34 @@ function handleAdd(product) {
 function updateStockDisplay(actualQty, productSlug, variantName = null) {
   const status = document.getElementById("stock-status");
   const btn = document.getElementById("add-to-cart-btn");
+
+  // Pack sizes share one stock count, so work in toys left rather than per option
+  if (isPackProduct(currentProduct)) {
+    const left = packUnitsLeft(currentProduct);
+    document.querySelectorAll("#variant-picker .variant-opt").forEach((b) => {
+      const v = findVariant(currentProduct, b.dataset.variant);
+      b.disabled = !v || v.count > left;
+    });
+    const pack = findVariant(currentProduct, selectedVariantName);
+    if (pack && pack.count <= left) {
+      status.textContent = left < 5 ? `Low Stock: Only ${left} left!` : "In Stock";
+      status.className = "stock-status-text in-stock";
+      btn.disabled = false;
+      btn.textContent = "Add to Basket";
+    } else {
+      const inStock = currentProduct.quantity > 0;
+      status.textContent = !inStock
+        ? "Currently Sold Out"
+        : left > 0
+          ? `Only ${left} left, try a smaller pack!`
+          : "All available stock is in your basket!";
+      status.className = "stock-status-text out-of-stock";
+      btn.disabled = true;
+      btn.textContent = !inStock ? "Sold Out" : left > 0 ? "Not Enough Left" : "In Basket";
+    }
+    return;
+  }
+
   const inBasket = getBasketQty(productSlug, variantName);
   const available = Math.max(0, actualQty - inBasket);
 

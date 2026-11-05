@@ -87,10 +87,30 @@ function createProductCard(product, index = 0) {
   const hasVariants = product.variants && product.variants.length > 0;
   const tagline = product.tagline || null;
 
+  const isPack = isPackProduct(product);
   let totalAvailable = 0;
   let variantHtml = "";
 
-  if (hasVariants) {
+  if (isPack) {
+    // Pack sizes share the product's stock; a pack is available if it still fits
+    const left = packUnitsLeft(product);
+    const fits = product.variants.filter((v) => v.count <= left);
+    totalAvailable = fits.length ? left : 0;
+    variantHtml = product.variants
+      .map((v) => {
+        const off = v.count > left;
+        return `
+          <button class="variant-pill ${off ? "disabled" : ""}"
+                  data-variant="${v.name}"
+                  title="${v.name}${off ? " (Not enough left)" : ""}"
+                  ${off ? "disabled" : ""}
+                  onclick="event.preventDefault(); selectVariantAndAdd('${product.slug}', '${v.name}')">
+            ${v.name} · £${(v.price_pence / 100).toFixed(2)}
+          </button>
+        `;
+      })
+      .join("");
+  } else if (hasVariants) {
     variantHtml = product.variants
       .map((v) => {
         const inBasket = getBasketQty(product.slug, v.name);
@@ -127,7 +147,7 @@ function createProductCard(product, index = 0) {
 
           ${hasVariants ? `
             <div class="variant-popover" id="popover-${product.slug}">
-              <p>Pick a colour:</p>
+              <p>${isPack ? "Pick a pack size:" : "Pick a colour:"}</p>
               <div class="variant-dots-grid">${variantHtml}</div>
               <button class="close-popover"
                 onclick="event.preventDefault(); toggleVariantPicker('${product.slug}', false)">&#x2715;</button>
@@ -151,7 +171,7 @@ function createProductCard(product, index = 0) {
         <div class="shop-item-info">
           <h3>${product.name}</h3>
           ${tagline ? `<h4>${tagline}</h4>` : ""}
-          <p class="price">&pound;${price}</p>
+          <p class="price">${isPack ? "From " : ""}&pound;${price}</p>
         </div>
       </a>
     </article>
@@ -172,7 +192,21 @@ function refreshProductCard(slug) {
   const hasVariants = product.variants?.length > 0;
   let totalAvailable = 0;
 
-  if (hasVariants) {
+  if (isPackProduct(product)) {
+    const left = packUnitsLeft(product);
+    let anyFits = false;
+    product.variants.forEach((v) => {
+      const off = v.count > left;
+      anyFits ||= !off;
+      const pill = [...card.querySelectorAll(".variant-pill")].find((b) => b.dataset.variant === v.name);
+      if (pill) {
+        pill.disabled = off;
+        pill.classList.toggle("disabled", off);
+        pill.title = `${v.name}${off ? " (Not enough left)" : ""}`;
+      }
+    });
+    totalAvailable = anyFits ? left : 0;
+  } else if (hasVariants) {
     // Update each variant dot's disabled state
     product.variants.forEach((v) => {
       const inBasket = getBasketQty(product.slug, v.name);

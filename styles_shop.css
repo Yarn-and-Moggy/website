@@ -340,6 +340,29 @@
   transform: scale(1.2);
 }
 
+/* Pack sizes (variant_type quantity) - text pills instead of colour dots */
+.variant-pill {
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--text-main);
+  background: white;
+  color: var(--text-main);
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.variant-pill:hover {
+  transform: scale(1.05);
+}
+
+.variant-pill.disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
 .variant-dot.disabled {
   opacity: 0.3;
   cursor: not-allowed;
