@@ -49,6 +49,33 @@ function saveBasket(basket) {
   localStorage.setItem(BASKET_KEY, JSON.stringify(basket));
 }
 
+// ─── PACK SIZES ───────────────────────────────────────────────────────────────
+// Products with variant_type "quantity" are sold in packs (e.g. Single, Pack of 3).
+// Each pack option has its own price_pence and a count, and every pack draws on
+// the product's single quantity. Other variant products (colours) keep their
+// own stock per variant and use the product price.
+
+function isPackProduct(product) {
+  return product?.variant_type === "quantity" && product.variants?.length > 0;
+}
+
+function findVariant(product, variantName) {
+  return product?.variants?.find((v) => v.name === variantName) ?? null;
+}
+
+// Single toys of this product already in the basket (a Pack of 3 counts as 3)
+function unitsInBasket(slug) {
+  return Object.entries(getBasket()).reduce((sum, [key, item]) => {
+    if (key !== slug && !key.startsWith(`${slug}:`)) return sum;
+    return sum + (item?.quantity ?? 0) * (item?.unitCount || 1);
+  }, 0);
+}
+
+// Toys still available to add for a pack product
+function packUnitsLeft(product) {
+  return Math.max(0, (product.quantity || 0) - unitsInBasket(product.slug));
+}
+
 // ─── BADGE ────────────────────────────────────────────────────────────────────
 
 function updateBasketBadge() {
@@ -161,6 +188,44 @@ function addToBasket(
   const basket = getBasket();
   const itemKey = variantName ? `${product.slug}:${variantName}` : product.slug;
 
+  const currentBasketCount = basket[itemKey]?.quantity ?? 0;
+  const requestedTotal = currentBasketCount + quantity;
+
+  // Pack sizes all share the product's stock, so check toys rather than packs
+  if (isPackProduct(product)) {
+    const pack = findVariant(product, variantName);
+    if (!pack || pack.count * quantity > packUnitsLeft(product)) {
+      showBasketMessage(
+        product.quantity > 0
+          ? `🙀 Sorry, there aren't enough left for ${quantity > 1 ? "that many" : `a ${variantName}`}!`
+          : "🙀 Sorry, this item is sold out!",
+        "error",
+      );
+      const btn =
+        document.querySelector(`[data-slug="${product.slug}"] .quick-add`) ||
+        document.getElementById("add-to-cart-btn");
+      if (btn) {
+        btn.classList.add("shudder");
+        setTimeout(() => btn.classList.remove("shudder"), 500);
+      }
+      return false;
+    }
+    basket[itemKey] = {
+      quantity: requestedTotal,
+      name: product.name,
+      variantName: variantName,
+      price_pence: pack.price_pence,
+      // Lets the basket count toys across pack sizes; the server works it out itself at checkout
+      unitCount: pack.count,
+      thumbnail_url: product.thumbnail_url,
+    };
+    saveBasket(basket);
+    updateBasketBadge();
+    showBasketMessage(`😻 Added ${product.name} (${variantName})!`);
+    if (typeof onSuccess === "function") onSuccess(product, variantName);
+    return true;
+  }
+
   // Determine available stock
   let availableStock = 0;
   if (variantName) {
@@ -169,9 +234,6 @@ function addToBasket(
   } else {
     availableStock = product.quantity || 0;
   }
-
-  const currentBasketCount = basket[itemKey]?.quantity ?? 0;
-  const requestedTotal = currentBasketCount + quantity;
 
   // Stock validation
   if (requestedTotal > availableStock) {
