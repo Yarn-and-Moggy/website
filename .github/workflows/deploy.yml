@@ -27,6 +27,13 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Fail on leftover merge conflict markers
+        run: |
+          if git grep -nE '^(<<<<<<<|=======|>>>>>>>)( |$)' -- . ':!*.md'; then
+            echo "::error::Merge conflict markers found - resolve them before deploying"
+            exit 1
+          fi
+
       - name: Install dependencies
         run: pip install -r requirements.txt
 
